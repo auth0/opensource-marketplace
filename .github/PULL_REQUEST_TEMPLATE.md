@@ -3,9 +3,7 @@
 <!--
 Please describe what is changing, what you are adding, and/or why this is important. Include:
 
--   Endpoints added, deleted, deprecated, or changed
--   Classes and methods added, deleted, deprecated, or changed
--   A summary if this is a new feature or templae
+-   A summary if this is a new feature or template
 -   Any alternative approaches considered
 -->
 
