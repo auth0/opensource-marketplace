@@ -1,0 +1,29 @@
+name: Template ID Checks
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+jobs:
+  updates:
+    name: Updated IDs
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # necessary to have all history (0) in order to be able to properly call git diff
+      - name: Check template ids for update
+        run: scripts/templates/template-id-update-check.sh
+  uniqueness:
+    name: Unique IDs
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # necessary to have all history (0) in order to be able to properly call git diff
+      - name: Check template ids for uniqueness
+        run: scripts/templates/template-id-uniqueness-check.sh
