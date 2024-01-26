@@ -1,6 +1,6 @@
-id: 'c9fa1544-b8bd-4211-950e-'
+id: 'c9fa1544-b8bd-4211-950e-3c6ba2a946f4'
 name: 'Check if a user belongs to an active directory group.'
-description: false
+description: 'Check if a user belongs to an AD group and if not, deny access.'
 public: true
 triggers:
     - 'PASSWORD_RESET_POST_CHALLENGE'
