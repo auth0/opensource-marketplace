@@ -10,24 +10,19 @@ exports.onExecutePostChallenge = async (event, api) => {
     // ensure that the allowed group is configured
     const groupAllowed = event.secrets.ALLOWED_GROUP;
     if (!groupAllowed) {
-    return api.access.deny('Invalid configuration');
+        return api.access.deny('Invalid configuration');
     }
 
     // get the users groups
     let groups = event.user.groups || [];
     if (!Array.isArray(groups)) {
-    groups = [groups];
+        groups = [groups];
     }
 
     // if the allowed group is not one of the users, deny access
     if (!groups.includes(groupAllowed)) {
-    return api.access.deny('Access denied');
+        return api.access.deny('Access denied');
     }
-
-
-
-
-
 };
 
 /**
