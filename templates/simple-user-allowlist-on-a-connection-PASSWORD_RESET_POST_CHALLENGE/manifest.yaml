@@ -1,0 +1,16 @@
+id: '52afbe4c-470e-495e-b400-1a60a33e419f'
+name: 'Simple User Allow List on a Connection'
+description: 'Allow password reset only to certain users coming from a specific connection'
+public: true
+triggers:
+    - 'PASSWORD_RESET_POST_CHALLENGE'
+runtime: 'node18'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/simple-user-allowlist-on-a-connection-PASSWORD_RESET_POST_CHALLENGE'
+notes: |
+    **Secrets**
+
+    * `ALLOW_LIST_CONNECTION` - the name of the connection against which accounts will be validated, eg: `Username-Password-Authentication`
+    * `ALLOW_USER_EMAILS` - a comma-delimited list of allowed email addresses
+
+useCases:
+    - 'ACCESS_CONTROL'

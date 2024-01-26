@@ -1,0 +1,15 @@
+id: 'f246bbc7-6676-4a30-9706-bd328e7f9ac4'
+name: 'Add Email to Access Token'
+description: 'Add the users email as one of the fields in the access token'
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/add-email-to-access-token-POST_LOGIN'
+notes: |
+    **Optional Secrets**
+
+    * `NAMESPACE` - optional namespace for the access token field, for example `https://acme-inc.com` would result in an access token that looks like: `{ ... "https://acme-inc.com/email": "user@acme-email.com" ... }`
+
+useCases:
+    - 'ENRICH_PROFILE'

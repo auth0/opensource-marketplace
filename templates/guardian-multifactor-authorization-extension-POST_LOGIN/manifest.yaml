@@ -1,0 +1,23 @@
+id: '6da6fb1f-5215-4160-bbc6-73cb067a1de3'
+name: 'Trigger multifactor authentication based on role membership'
+description: 'Trigger multifactor authentication using Auth0 Guardian based on the users role membership'
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+modules: []
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/guardian-multifactor-authorization-extension-POST_LOGIN'
+notes: |
+    **Secrets**
+
+    `MFA_ROLES` - comma-delimited list of roles that require multi-factor authentication
+
+    **Notes**
+
+    * For more information on Auth0 Guardian, please refer to https://auth0.com/docs/secure/multi-factor-authentication/auth0-guardian
+    * To enable Auth0 Guardian push notification, refer to https://auth0.com/docs/secure/multi-factor-authentication/auth0-guardian/guardian-for-android-sdk#enable-guardian-push-notifications
+    * MFA prompt frequency is discussed further at https://auth0.com/docs/secure/multi-factor-authentication/customize-mfa#change-frequency-of-mfa-prompts
+    * For more information on Role Based Access Control, refer to https://auth0.com/docs/manage-users/access-control/rbac
+
+useCases:
+    - 'MULTIFACTOR'

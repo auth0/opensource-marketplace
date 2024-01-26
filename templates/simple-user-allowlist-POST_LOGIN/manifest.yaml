@@ -1,0 +1,15 @@
+id: 'a14b414a-ebfd-4df3-bfbb-7e10fff90cdc'
+name: 'Simple User Allowlist'
+description: 'Only allow access to a specific list of users'
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/simple-user-allowlist-POST_LOGIN'
+notes: |
+    **Requird Secrets**
+
+    * ALLOWED_USER_EMAILS - comma separated list of allowed user emails
+
+useCases:
+    - 'ACCESS_CONTROL'

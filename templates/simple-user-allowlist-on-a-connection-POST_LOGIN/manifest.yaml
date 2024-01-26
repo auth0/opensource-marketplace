@@ -1,0 +1,17 @@
+id: '7950292f-81ee-41f4-9e4d-5dfabd49f882'
+name: 'Simple User Allow List on a Connection'
+description: 'Allow access to certain users coming from a specific connection'
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+modules: []
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/simple-user-allowlist-on-a-connection-POST_LOGIN'
+notes: |
+    **Secrets**
+
+    * `ALLOW_LIST_CONNECTION` - the name of the connection against which accounts will be validated, eg: `Username-Password-Authentication`
+    * `ALLOW_USER_EMAILS` - a comma-delimited list of allowed email addresses
+
+useCases:
+    - 'ACCESS_CONTROL'

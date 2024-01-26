@@ -1,0 +1,20 @@
+id: 'e590705c-1e59-4746-acab-8b0bdb329b4f'
+name: 'Add Persistent Attributes to the User'
+description: 'Set any preference value to a user (using `user_metadata`).'
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/add-persistence-attribute-POST_LOGIN'
+notes: |
+    **Required Secrets**
+
+    * `METADATA_KEY` - key to be used to store the user preference, for example: 'favorite_color'
+    * `METADATA_DEFAULT_VALUE` - value to be stored for the user preference in the event that it does not already exist, for example: 'blue'
+
+    **Optional Secrets**
+
+    * `ID_TOKEN_NAMESPACE` - An optional namespace to set the preference via a custom claim
+
+useCases:
+    - 'ENRICH_PROFILE'
