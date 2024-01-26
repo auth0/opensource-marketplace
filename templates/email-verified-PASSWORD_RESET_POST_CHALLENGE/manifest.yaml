@@ -1,0 +1,9 @@
+id: '2e396d57-5c71-4d2d-a0e4-aa14ba1e8e7b'
+name: 'Confirm Email is Verified'
+description: 'Confirm the user email is verified before allowing the password reset to complete'
+public: true
+triggers: ['PASSWORD_RESET_POST_CHALLENGE']
+runtime: 'node18'
+modules: []
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/email-verified-PASSWORD_RESET_POST_CHALLENGE'
+useCases: ['ACCESS_CONTROL']

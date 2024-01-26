@@ -1,0 +1,26 @@
+id: '362b841a-eec1-43be-9a01-78a2a7c31c5a'
+name: 'Creates a new Lead in Salesforce after user registration'
+description: 'Call Salesforce API to record the contact as a new Lead. It is using Salesforce REST APIs and the `client credentials` flow to obtain an `access_token`.'
+public: true
+triggers:
+    - 'POST_USER_REGISTRATION'
+runtime: 'node18'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/creates-lead-salesforce-POST_USER_REGISTRATION'
+notes: |
+    **Secrets**
+
+    * `SALESFORCE_DOMAIN` - your salesforce domain, eg: `EXAMPLE.my.salesforce.com`
+    * `SALESFORCE_COMPANY` - the name of your company
+    * `SALESFORCE_CLIENT_ID` - the Salesforce client id
+    * `SALESFORCE_CLIENT_SECRET` - the Salesforce client secret
+
+    **Notes**
+
+    This should *not* be used in combination with creates-lead-salesforce-POST_LOGIN,
+    as it would result in multiple leads for the same user. Choose one trigger.
+
+    You will need to create a connected application in your salesforce instance
+    and enable client credentials.
+
+useCases:
+    - 'ENRICH_PROFILE'

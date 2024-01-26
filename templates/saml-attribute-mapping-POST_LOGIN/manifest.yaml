@@ -1,0 +1,10 @@
+id: '2af5b91a-be49-49ba-9dcc-934f4bd6dd8f'
+name: 'SAML Attributes Mapping'
+description: 'In a SAML application, customize the mapping between the Auth0 user and the SAML attributes'
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/saml-attribute-mapping-POST_LOGIN'
+useCases:
+    - 'ENRICH_PROFILE'

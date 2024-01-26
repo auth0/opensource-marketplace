@@ -1,0 +1,15 @@
+id: '26ed2851-dc1f-42f3-b131-03747770ed1c'
+name: 'Allowlist for a Specific App'
+description: 'Only allow specific users access to an app'
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/simple-user-allowlist-for-app-POST_LOGIN'
+notes: |
+    **Requird Secrets**
+    * `ALLOWED_CLIENT_ID` - client id to allow access for
+    * `ALLOWED_USER_EMAILS` - comma separated list of user emails to allow access for
+
+useCases:
+    - 'ACCESS_CONTROL'

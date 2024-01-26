@@ -1,0 +1,17 @@
+id: 'cd0916fa-e496-4b7c-ba1f-4b9cd181b76b'
+name: 'Trigger MFA when the requesting IP is from outside a specific IP range'
+description: 'Trigger MFA when the requesting IP is from outside a specific IP range'
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+modules:
+    - name: 'ipaddr.js'
+      version: 'latest'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/guardian-multifactor-ip-range-POST_LOGIN'
+useCases:
+    - 'MULTIFACTOR'
+notes: |
+    **Secrets**
+
+    * `TRUSTED_CIDR` - The trusted CIDR allocation, for example: `192.168.0.0/16`.

@@ -1,0 +1,21 @@
+id: 'c17dd4ce-28e0-4401-8cef-133eec1debc8'
+name: 'Roles from a SOAP Service'
+description: 'Shows how to query a basic profile http binding SOAP web service for roles.'
+public: true
+triggers:
+    - 'PASSWORD_RESET_POST_CHALLENGE'
+runtime: 'node18'
+modules:
+    - name: '@xmldom/xmldom'
+      version: 'latest'
+    - name: 'xpath'
+      version: 'latest'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/soap-webservice-PASSWORD_RESET_POST_CHALLENGE'
+notes: |
+    **Required Secrets**
+
+    * `DOMAIN` - domain name of your SOAP server, eg. my-soap-server.com
+    * `SOAP_ACTION` - `SOAPAction` header for the soap request.
+
+useCases:
+    - 'ENRICH_PROFILE'

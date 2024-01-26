@@ -1,0 +1,15 @@
+id: '15907f76-1d60-439d-bdc1-3d0514650cd7'
+name: 'Only allow access from a specific IP address'
+description: 'Only allow access from a specific IP address'
+public: true
+triggers:
+    - 'CREDENTIALS_EXCHANGE'
+runtime: 'node18'
+modules: []
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/ip-address-allowlist-CREDENTIALS_EXCHANGE'
+useCases:
+    - 'ACCESS_CONTROL'
+notes: |
+    **Secrets**
+
+    * `ALLOW_LIST` - comma-delimited list of allowed IP addresses.

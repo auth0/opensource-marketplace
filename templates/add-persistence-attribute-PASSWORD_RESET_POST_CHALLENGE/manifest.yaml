@@ -1,0 +1,22 @@
+id: 'a66b279a-067c-414b-93e8-c35698f8f379'
+name: 'Add Persistent Attributes to the User'
+description: 'Set any preference value to a user (using `user_metadata`).'
+public: true
+triggers:
+    - 'PASSWORD_RESET_POST_CHALLENGE'
+runtime: 'node18'
+modules:
+    - name: 'auth0'
+      version: 'latest'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/add-persistence-attribute-PASSWORD_RESET_POST_CHALLENGE'
+notes: |
+    **Required Secrets**
+
+    * `METADATA_KEY` - key to be used to store the user preference, for example: 'favorite_color'
+    * `METADATA_DEFAULT_VALUE` - value to be stored for the user preference in the event that it does not already exist, for example: 'blue'
+    * `CLIENT_ID` - client id for an application that is permitted to update your users
+    * `CLIENT_SECRET` - corresponding client secret for `CLIENT_ID`, you'll find this in the settings alongside `CLIENT_ID`
+    * `TENANT_DOMAIN` - corresponding tenant domain for `CLIENT_ID`, you'll find this in the settings alongside `CLIENT_ID`
+
+useCases:
+    - 'ENRICH_PROFILE'

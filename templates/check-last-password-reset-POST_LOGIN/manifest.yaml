@@ -1,0 +1,13 @@
+id: '5b683a11-c2a2-48cf-b64a-f953a6e2b16e'
+name: 'Check Last Password Reset'
+description: 'Check how long it has been since the users password has been reset and deny access if it is beyond a configured threshold.'
+public: true
+triggers: ['POST_LOGIN']
+runtime: 'node18'
+modules: []
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/check-last-password-reset-POST_LOGIN'
+notes: |
+    **Secrets**
+
+    * `MAX_PASSWORD_DAYS` - maximum age of a user password in days.
+useCases: ['ACCESS_CONTROL']

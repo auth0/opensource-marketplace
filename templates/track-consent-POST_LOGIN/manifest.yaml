@@ -1,0 +1,15 @@
+id: '008eec1c-de87-462b-9ab6-ce8712e3394d'
+name: 'Track consent from Auth0 Lock'
+description: "Adds metadata on when a user has accepted the terms and conditions from within Auth0's Lock"
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/track-consent-POST_LOGIN'
+notes: |
+    **Note**
+
+    * This action is useful for cases where you want to track a user's consent from within Auth0 Lock, however it does not explicitly record whether consent was checked. See https://auth0.com/docs/compliance/gdpr/features-aiding-compliance/user-consent/track-consent-with-lock for more information.
+
+useCases:
+    - 'ACCESS_CONTROL'

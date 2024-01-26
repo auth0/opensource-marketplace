@@ -1,0 +1,15 @@
+id: 'dca2e879-7380-41de-b683-063e9e9fd28e'
+name: 'Allowlist for a Specific App'
+description: 'Only allow specific users access to an app'
+public: true
+triggers:
+    - 'PASSWORD_RESET_POST_CHALLENGE'
+runtime: 'node18'
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/simple-user-allowlist-for-app-PASSWORD_RESET_POST_CHALLENGE'
+notes: |
+    **Requird Secrets**
+    * `ALLOWED_CLIENT_ID` - client id to allow access for
+    * `ALLOWED_USER_EMAILS` - comma separated list of user emails to allow access for
+
+useCases:
+    - 'ACCESS_CONTROL'

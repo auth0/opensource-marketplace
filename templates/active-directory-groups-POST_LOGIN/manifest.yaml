@@ -1,0 +1,15 @@
+id: 'fd8e30ba-02e2-4648-8d89-78bc10425ab4'
+name: 'Check if a user belongs to an active directory group.'
+description: 'Check if a user belongs to an AD group and if not, deny access.'
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+modules: []
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/active-directory-groups-POST_LOGIN'
+notes: |
+    **Secrets**
+
+    * `ALLOWED_GROUP` - the name of the allowed group.
+useCases:
+    - 'ACCESS_CONTROL'

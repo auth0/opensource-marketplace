@@ -1,0 +1,9 @@
+id: '33f740c8-9a8e-4886-be63-83afb6ef40cc'
+name: 'Confirm Email is Verified'
+description: 'Confirm user email is verified before completing login'
+public: true
+triggers: ['POST_LOGIN']
+runtime: 'node18'
+modules: []
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/email-verified-POST_LOGIN'
+useCases: ['ACCESS_CONTROL']

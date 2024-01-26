@@ -1,0 +1,15 @@
+id: 'f8fd2198-e982-46b3-addc-8cf805efac91'
+name: 'Simple Domain Allow List'
+description: 'This actions template will only allow registration for users with specific email domains.'
+public: true
+triggers:
+    - 'PRE_USER_REGISTRATION'
+runtime: 'node18'
+modules: []
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/simple-domain-allowlist-PRE_USER_REGISTRATION'
+useCases:
+    - 'ACCESS_CONTROL'
+notes: |
+    **Secrets**
+
+    * `ALLOWED_DOMAINS` - comma delimited list of email domains users are allowed to use.

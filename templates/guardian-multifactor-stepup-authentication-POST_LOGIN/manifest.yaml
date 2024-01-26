@@ -1,0 +1,16 @@
+id: '91ed1e01-689c-4d4d-92a2-b1f789871a6c'
+name: 'Challenge for a Second Authentication Factor on Request'
+description: 'Challenge for a second authentication factor on request (step up) when acr_values is sent in the request and MFA has not already been completed'
+public: true
+triggers:
+    - 'POST_LOGIN'
+runtime: 'node18'
+modules: []
+sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/guardian-multifactor-stepup-authentication-POST_LOGIN'
+notes: |
+    **Notes**
+
+    * Requires acr_values to be set to http://schemas.openid.net/pape/policies/2007/06/multi-factor
+      * For detailed instructions, see https://auth0.com/docs/secure/multi-factor-authentication/step-up-authentication/configure-step-up-authentication-for-web-apps#configure-app
+useCases:
+    - 'MULTIFACTOR'
