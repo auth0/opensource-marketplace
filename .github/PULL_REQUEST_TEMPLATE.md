@@ -35,7 +35,9 @@ Please describe how this can be tested by reviewers.
 
 ### Checklist
 
+-   [ ] This pull request's title matches the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/#examples) format
+-   [ ] This branch is up to date with `main`
+-   [ ] All existing and new checks complete without errors
 -   [ ] I have read the [Auth0 general contribution guidelines](https://github.com/auth0/open-source-template/blob/master/GENERAL-CONTRIBUTING.md)
 -   [ ] I have read the [Auth0 Code of Conduct](https://github.com/auth0/open-source-template/blob/master/CODE-OF-CONDUCT.md)
 -   [ ] I have read the [Contribution guide](https://github.com/auth0/opensource-marketplace/blob/main/CONTRIBUTING.md) for this repository
--   [ ] All existing and new checks complete without errors
