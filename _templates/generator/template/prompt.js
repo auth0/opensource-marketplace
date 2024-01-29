@@ -1,4 +1,5 @@
 const { kebabCase } = require('lodash');
+const uuid = require('uuid');
 
 const TRIGGERS = [
     'POST_LOGIN',
@@ -34,6 +35,7 @@ module.exports = {
 
         return inquirer.prompt(questions).then((answers) => {
             const { name, description, trigger } = answers;
+            const id = uuid.v4();
 
             let error = false;
 
@@ -62,6 +64,7 @@ module.exports = {
 
             return {
                 ...answers,
+                id,
                 name,
                 description,
                 trigger,

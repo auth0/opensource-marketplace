@@ -1,28 +1,29 @@
 {
-  "name": "opensource-marketplace",
-  "version": "0.0.1",
-  "description": "A collection 3rd-party code that's used to manage the open source marketplace contributions.",
-  "scripts": {
-    "pretty:check:templates": "prettier --check ./templates",
-    "validate:templates": "node ./scripts/templates/validate-templates.js",
-    "add:template": "hygen generator template"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/auth0/opensource-marketplace.git"
-  },
-  "author": "",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/auth0/opensource-marketplace/issues"
-  },
-  "homepage": "https://github.com/auth0/opensource-marketplace#readme",
-  "devDependencies": {
-    "js-yaml": "^4.1.0",
-    "prettier": "^3.0.3",
-    "zod": "^3.22.4",
-    "zod-validation-error": "^2.1.0",
-    "lodash": "^4.17.21",
-    "hygen": "^6.2.11"
-  }
+    "name": "opensource-marketplace",
+    "version": "0.0.1",
+    "description": "A collection 3rd-party code that's used to manage the open source marketplace contributions.",
+    "scripts": {
+        "pretty:check:templates": "prettier --check ./templates",
+        "validate:templates": "node ./scripts/templates/validate-templates.js",
+        "add:template": "hygen generator template"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/auth0/opensource-marketplace.git"
+    },
+    "author": "",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/auth0/opensource-marketplace/issues"
+    },
+    "homepage": "https://github.com/auth0/opensource-marketplace#readme",
+    "devDependencies": {
+        "js-yaml": "^4.1.0",
+        "prettier": "^3.0.3",
+        "zod": "^3.22.4",
+        "zod-validation-error": "^2.1.0",
+        "lodash": "^4.17.21",
+        "hygen": "^6.2.11",
+        "uuid": "^9.0.1"
+    }
 }
