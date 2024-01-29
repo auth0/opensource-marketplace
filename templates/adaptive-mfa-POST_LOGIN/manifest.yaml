@@ -1,6 +1,6 @@
 id: 'd2a3e1d7-e2ef-4681-8192-cdcac078b7df'
 name: 'Trigger multi-factor authentication when a condition is met'
-public: false
+public: true
 description: 'A POST_LOGIN action to trigger multifactor authentication based on risk assessment and if the user is enrolled in at least one factor.'
 triggers: ['POST_LOGIN']
 runtime: 'node18'
