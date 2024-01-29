@@ -1,6 +1,7 @@
 id: '5396a2bb-6b32-41d4-b8e1-450f9b3c2f4c'
 name: 'Add Persistent Attributes to the User'
 description: 'Set any preference value to a user (using `user_metadata`).'
+public: true
 triggers:
     - 'SEND_PHONE_MESSAGE'
 runtime: 'node18'
