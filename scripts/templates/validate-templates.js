@@ -45,7 +45,6 @@ const TemplateSchema = z
         version: z.string().optional(),
         runtime: z.string().optional(),
         secrets: z.array(configValue).optional(),
-        config: z.array(configValue).optional(),
         sourceUrl: z.string().url(),
         code: z.string().min(3),
         modules: z.array(moduleValue).optional(),
