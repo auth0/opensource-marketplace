@@ -5,7 +5,7 @@ public: true
 triggers:
     - 'POST_LOGIN'
 runtime: 'node18'
-sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/require-mfa-once-per-session-POST_LOGIN'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/require-mfa-once-per-session-POST_LOGIN'
 notes: |
     # Notes
     * This action code requires at least one factor to be enabled for your tenant.

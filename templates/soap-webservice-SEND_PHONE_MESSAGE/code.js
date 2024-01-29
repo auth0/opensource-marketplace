@@ -1,7 +1,7 @@
 const xmldom = require('@xmldom/xmldom');
 const xpath = require('xpath');
 
-// --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/os-marketplace/blob/main/templates/soap-webservice-SEND_PHONE_MESSAGE ---
+// --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/soap-webservice-SEND_PHONE_MESSAGE ---
 /**
  * Handler that will be called during the execution of a SendPhoneMessage flow.
  *

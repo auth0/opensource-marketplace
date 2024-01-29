@@ -4,7 +4,7 @@
  * @param {Event} event - Details about the post challenge request.
  * @param {PasswordResetPostChallengeAPI} api - Interface whose methods can be used to change the behavior of the post challenge flow.
  *
- * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/os-marketplace/blob/main/templates/simple-user-allowlist-for-app-PASSWORD_RESET_POST_CHALLENGE ---
+ * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/simple-user-allowlist-for-app-PASSWORD_RESET_POST_CHALLENGE ---
  */
 exports.onExecutePostChallenge = async (event, api) => {
     if (!event.secrets.ALLOWED_CLIENT_ID) {

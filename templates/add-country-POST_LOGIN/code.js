@@ -1,4 +1,4 @@
-// --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/os-marketplace/blob/main/templates/add-country-POST_LOGIN ---
+// --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/add-country-POST_LOGIN ---
 /**
  * Handler that will be called during the execution of a PostLogin flow.
  *

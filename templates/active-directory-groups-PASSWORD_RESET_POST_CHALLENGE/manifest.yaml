@@ -6,7 +6,7 @@ triggers:
     - 'PASSWORD_RESET_POST_CHALLENGE'
 runtime: 'node18'
 modules: []
-sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/active-directory-groups-PASSWORD_RESET_POST_CHALLENGE'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/active-directory-groups-PASSWORD_RESET_POST_CHALLENGE'
 notes: |
     **Secrets**
 

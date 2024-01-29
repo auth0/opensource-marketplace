@@ -4,7 +4,7 @@
  * @param {Event} event - Details about the user and the context in which they are logging in.
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  *
- * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/os-marketplace/blob/main/templates/simple-user-allowlist-for-app-POST_LOGIN ---
+ * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/simple-user-allowlist-for-app-POST_LOGIN ---
  */
 exports.onExecutePostLogin = async (event, api) => {
     if (!event.secrets.ALLOWED_CLIENT_ID) {

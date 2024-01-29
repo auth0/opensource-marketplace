@@ -2,7 +2,7 @@ const { ManagementClient } = require('auth0');
 
 const HTTP_TIMEOUT = 1000; // 1s
 
-// --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/os-marketplace/blob/main/templates/add-persistence-attribute-SEND_PHONE_MESSAGE ---
+// --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/add-persistence-attribute-SEND_PHONE_MESSAGE ---
 /**
  * Handler that will be called during the execution of a SendPhoneMessage flow.
  *

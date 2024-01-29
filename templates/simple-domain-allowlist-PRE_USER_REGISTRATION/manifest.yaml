@@ -6,7 +6,7 @@ triggers:
     - 'PRE_USER_REGISTRATION'
 runtime: 'node18'
 modules: []
-sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/simple-domain-allowlist-PRE_USER_REGISTRATION'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/simple-domain-allowlist-PRE_USER_REGISTRATION'
 useCases:
     - 'ACCESS_CONTROL'
 notes: |

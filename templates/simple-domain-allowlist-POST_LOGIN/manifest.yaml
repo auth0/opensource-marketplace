@@ -6,7 +6,7 @@ triggers:
     - 'POST_LOGIN'
 runtime: 'node18'
 modules: []
-sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/simple-domain-allowlist-POST_LOGIN'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/simple-domain-allowlist-POST_LOGIN'
 useCases:
     - 'ACCESS_CONTROL'
 notes: |
