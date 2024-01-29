@@ -4,7 +4,8 @@
   "description": "A collection 3rd-party code that's used to manage the open source marketplace contributions.",
   "scripts": {
     "pretty:check:templates": "prettier --check ./templates",
-    "validate:templates": "node ./scripts/templates/validate-templates.js"
+    "validate:templates": "node ./scripts/templates/validate-templates.js",
+    "add:template": "hygen generator template"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,8 @@
     "js-yaml": "^4.1.0",
     "prettier": "^3.0.3",
     "zod": "^3.22.4",
-    "zod-validation-error": "^2.1.0"
+    "zod-validation-error": "^2.1.0",
+    "lodash": "^4.17.21",
+    "hygen": "^6.2.11"
   }
 }
