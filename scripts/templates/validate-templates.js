@@ -13,10 +13,6 @@ const IntegrationTrigger = [
     'POST_USER_REGISTRATION',
     'POST_CHANGE_PASSWORD',
     'SEND_PHONE_MESSAGE',
-    'IGA_APPROVAL',
-    'IGA_CERTIFICATION',
-    'IGA_FULFILLMENT_ASSIGNMENT',
-    'IGA_FULFILLMENT_EXECUTION',
     'PASSWORD_RESET_POST_CHALLENGE',
 ];
 
@@ -49,7 +45,6 @@ const TemplateSchema = z
         version: z.string().optional(),
         runtime: z.string().optional(),
         secrets: z.array(configValue).optional(),
-        config: z.array(configValue).optional(),
         sourceUrl: z.string().url(),
         code: z.string().min(3),
         modules: z.array(moduleValue).optional(),
