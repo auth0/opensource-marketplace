@@ -31,7 +31,7 @@ To create a new actions template, follow the steps below:
 2. Look within `manifest.yaml` and set the `deleted` field to `true`.
 3. Create a pull request with your changes.
 
-#### Actions Template Deployment
+#### Releasing Actions Templates
 
 The actions team will periodically take the actions templates represented in this repo and deploy them.
 
