@@ -1,9 +1,9 @@
 ---
-to: "<%= trigger == 'PASSWORD_RESET_POST_CHALLENGE' ? `templates/${fileName}-${trigger}/manifest.yaml` : null %>"
+to: "<%= `templates/${fileName}-${trigger}/manifest.yaml` %>"
 ---
 name: "<%= name %>"
 triggers:
-	- "PASSWORD_RESET_POST_CHALLENGE"
+	- "<%= trigger %>"
 useCases:
 	- 
 public: true
