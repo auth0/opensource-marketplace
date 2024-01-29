@@ -8,7 +8,7 @@ runtime: 'node18'
 modules:
     - name: 'auth0'
       version: 'latest'
-sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/add-persistence-attribute-POST_CHANGE_PASSWORD'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/add-persistence-attribute-POST_CHANGE_PASSWORD'
 notes: |
     **Required Secrets**
 

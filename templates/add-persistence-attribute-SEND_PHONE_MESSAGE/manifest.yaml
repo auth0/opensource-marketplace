@@ -7,7 +7,7 @@ runtime: 'node18'
 modules:
     - name: 'auth0'
       version: 'latest'
-sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/add-persistence-attribute-SEND_PHONE_MESSAGE'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/add-persistence-attribute-SEND_PHONE_MESSAGE'
 notes: |
     **Required Secrets**
 

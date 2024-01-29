@@ -9,6 +9,6 @@ secrets:
     - label: 'ALLOW_LIST'
       defaultValue: 'ALLOWED,IP,ADDRESSES'
 modules: []
-sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/ip-address-allowlist-PRE_USER_REGISTRATION'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/ip-address-allowlist-PRE_USER_REGISTRATION'
 useCases:
     - 'ACCESS_CONTROL'

@@ -2,7 +2,7 @@ const { ManagementClient } = require('auth0');
 
 const HTTP_TIMEOUT = 1000; // 1s
 
-// --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/os-marketplace/blob/main/templates/add-persistence-attribute-PASSWORD_RESET_POST_CHALLENGE ---
+// --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/add-persistence-attribute-PASSWORD_RESET_POST_CHALLENGE ---
 /**
  * Handler that will be called during the execution of a Password Reset / Post Challenge Flow.
  *

@@ -10,7 +10,7 @@ modules:
       version: 'latest'
     - name: 'xpath'
       version: 'latest'
-sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/soap-webservice-POST_LOGIN'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/soap-webservice-POST_LOGIN'
 notes: |
     **Requied Secrets**
 

@@ -1,7 +1,7 @@
 /**
  * Handler that will be called during the execution of a Client Credentials exchange.
  *
- * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/os-marketplace/blob/main/templates/ip-address-allowlist-CREDENTIALS_EXCHANGE ---
+ * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/ip-address-allowlist-CREDENTIALS_EXCHANGE ---
  *
  * @param {Event} event - Details about client credentials grant request.
  * @param {CredentialsExchangeAPI} api - Interface whose methods can be used to change the behavior of client credentials grant.

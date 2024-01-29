@@ -5,7 +5,7 @@ public: true
 triggers: ['PASSWORD_RESET_POST_CHALLENGE']
 runtime: 'node18'
 modules: []
-sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/querystring-PASSWORD_RESET_POST_CHALLENGE'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/querystring-PASSWORD_RESET_POST_CHALLENGE'
 useCases:
     - 'ENRICH_PROFILE'
 notes: |

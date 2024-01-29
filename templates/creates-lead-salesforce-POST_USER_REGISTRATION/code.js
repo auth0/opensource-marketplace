@@ -1,7 +1,7 @@
 /**
  * Handler that will be called during the execution of a PostUserRegistration flow.
  *
- * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/os-marketplace/blob/main/templates/creates-lead-salesforce-POST_USER_REGISTRATION ---
+ * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/creates-lead-salesforce-POST_USER_REGISTRATION ---
  *
  * @param {Event} event - Details about the context and user that has registered.
  * @param {PostUserRegistrationAPI} api - Methods and utilities to help change the behavior after a signup.

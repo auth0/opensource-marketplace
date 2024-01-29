@@ -6,7 +6,7 @@ triggers:
     - 'CREDENTIALS_EXCHANGE'
 runtime: 'node18'
 modules: []
-sourceUrl: 'https://github.com/auth0/os-marketplace/blob/main/templates/ip-address-allowlist-CREDENTIALS_EXCHANGE'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/ip-address-allowlist-CREDENTIALS_EXCHANGE'
 useCases:
     - 'ACCESS_CONTROL'
 notes: |

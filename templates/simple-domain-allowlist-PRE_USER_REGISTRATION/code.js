@@ -1,7 +1,7 @@
 /**
  * Handler that will be called during the execution of a PreUserRegistration flow.
  *
- * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/os-marketplace/blob/main/templates/simple-domain-allowlist-PRE_USER_REGISTRATION ---
+ * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/simple-domain-allowlist-PRE_USER_REGISTRATION ---
  *
  * @param {Event} event - Details about the context and user that is attempting to register.
  * @param {PreUserRegistrationAPI} api - Interface whose methods can be used to change the behavior of the signup.

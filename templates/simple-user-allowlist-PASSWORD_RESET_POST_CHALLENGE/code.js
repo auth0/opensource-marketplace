@@ -1,4 +1,4 @@
-// --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/os-marketplace/blob/main/templates/simple-user-allowlist-PASSWORD_RESET_POST_CHALLENGE ---
+// --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/simple-user-allowlist-PASSWORD_RESET_POST_CHALLENGE ---
 /**
  * Handler that will be called during the execution of a Password Reset / Post Challenge Flow.
  *
