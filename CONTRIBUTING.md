@@ -23,7 +23,7 @@ To create a new actions template, follow the steps below:
 
 > [!NOTE]
 >
-> -   You are not allowed to update the `id` if an actions template
+> -   You are not allowed to update the `id` of an actions template
 
 #### Deleting an Actions Template
 
