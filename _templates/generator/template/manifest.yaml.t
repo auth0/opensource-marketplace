@@ -1,6 +1,7 @@
 ---
 to: "<%= `templates/${fileName}-${trigger}/manifest.yaml` %>"
 ---
+id: "<%= id %>"
 name: "<%= name %>"
 triggers:
 	- "<%= trigger %>"
