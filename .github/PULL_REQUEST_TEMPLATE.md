@@ -35,6 +35,7 @@ Please describe how this can be tested by reviewers.
 
 ### Checklist
 
+-   [ ] I have manually tested any new or updated actions templates in a real auth0 account.
 -   [ ] This pull request's title matches the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/#examples) format
 -   [ ] This branch is up to date with `main`
 -   [ ] All existing and new checks complete without errors
