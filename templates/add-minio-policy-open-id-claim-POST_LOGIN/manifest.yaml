@@ -1,0 +1,30 @@
+id: "64887fc5-cbef-49e0-a4f9-9a352b4a9da8"
+name: "Add MinIO Policy OpenID Claim"
+description: "Add MinIO policy claim to white-listed users"
+public: true
+triggers: ["POST_LOGIN"]
+runtime: "node18"
+modules: []
+version: "1.0.0"
+sourceUrl: "https://github.com/auth0/opensource-marketplace/tree/main/templates/add-minio-policy-open-id-claim-POST_LOGIN/manifest.yaml"
+useCases:
+    - "ENRICH_PROFILE"
+notes: |
+    **Secrets**
+
+    * `POST_LOGIN_MINIO_CLAIM_PREFIX` - the JWT Claim prefix for ID and access tokens
+    * `POST_LOGIN_MINIO_CLAIM_DEFAULT_POLICY` - the default MinIO policy for any unmapped user (e.g. from a social connection)
+    * `POST_LOGIN_MINIO_CLAIM_USER_POLICY_MAP` - JSON map of users to their intended MinIO authorizations/policies by verified email
+
+    **Notes**
+
+    See MinIO [OpenID Identity Management Settings](https://min.io/docs/minio/linux/reference/minio-server/settings/iam/openid.html#)
+    for documentation on how the integration is implemented from the vendor side.
+
+secrets:
+    - label: "POST_LOGIN_MINIO_CLAIM_PREFIX"
+      defaultValue: https://play.min.io/
+    - label: "POST_LOGIN_MINIO_CLAIM_DEFAULT_POLICY"
+      defaultValue: noaccess
+    - label: "POST_LOGIN_MINIO_CLAIM_USER_POLICY_MAP"
+      defaultValue: '{"you@example.com": "readwrite,diagnostics", "your_cat@example.com": "readonly"}'
