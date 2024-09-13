@@ -59,7 +59,7 @@ exports.onExecutePostLogin = async (event, api) => {
 
     console.log(`session count for user ${sub}: ${count}`);
 
-    if (count >= MAX_SESSION) {
+    if (count > MAX_SESSION) {
         api.access.deny('max sessions reached');
     }
 
