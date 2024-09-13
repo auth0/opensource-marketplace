@@ -13,10 +13,6 @@ const interactive_login = new RegExp('^oidc-');
  * @param api https://auth0.com/docs/customize/actions/flows-and-triggers/login-flow/api-object
  * @returns {Promise<void>}
  *
- * TODO: can we count on first interactive login only?
- * TODO: api.cache to cache est session count
- * TODO: use session management API
- *
  * NPM Dependencies:
  *  - ioredis
  */
