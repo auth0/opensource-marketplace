@@ -5,7 +5,7 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
-    let currentTime = new Date().getTime();
+    const currentTime = Date.now();
   
     // Get organization or client metadata (organization takes precedence if present)
     const metadata = event.organization?.metadata || event.client?.metadata || event.connection?.metadata;
