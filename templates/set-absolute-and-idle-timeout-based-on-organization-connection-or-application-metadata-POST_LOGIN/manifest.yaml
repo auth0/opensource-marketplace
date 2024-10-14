@@ -1,28 +1,11 @@
 id: "454ef310-4779-41bb-bed4-c916ab9eaaed"
 name: "Set Absolute and Idle Timeout based on Organization, Connection or Application Metadata"
 triggers:
-	- "POST_LOGIN"
+		- "POST_LOGIN"
 useCases:
-	- 
+		- "ACCESS_CONTROL"	 
 public: true
 description: "Configure a custom absolute or idle timeout based on specific metadata that can be create either on organization, connection or application"
 version: "1.0.0"
 runtime: "node18"
 sourceUrl: "https://github.com/auth0/opensource-marketplace/tree/main/templates/set-absolute-and-idle-timeout-based-on-organization-connection-or-application-metadata-POST_LOGIN/manifest.yaml"
-notes: ""
-
-# secrets example:
-# 
-# secrets:
-# 	- label: 'MY_SECRET'
-# 	  defaultValue: 'this is the default'
-secrets:
-	- 
-
-# modules example:
-# 
-# modules:
-# 	- name: 'aws-sdk'
-# 	  version: 'latest'
-modules:
-	- 
