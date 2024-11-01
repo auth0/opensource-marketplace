@@ -1,9 +1,9 @@
 id: "454ef310-4779-41bb-bed4-c916ab9eaaed"
 name: "Set Absolute and Idle Timeout based on Organization, Connection or Application Metadata"
 triggers:
-		- "POST_LOGIN"
+  - "POST_LOGIN"
 useCases:
-		- "ACCESS_CONTROL"	 
+  - "ACCESS_CONTROL"	 
 public: true
 description: "Configure a custom absolute or idle timeout based on specific metadata that can be create either on organization, connection or application"
 version: "1.0.0"
