@@ -33,7 +33,7 @@ exports.onExecutePostLogin = async (event, api) => {
     }
   }
 };
-  
+
 
 /**
  * Handler that will be invoked when this action is resuming after an external redirect. If your
