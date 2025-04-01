@@ -27,13 +27,13 @@ notes: |
 
 secrets:
     - label: 'AUTH0_DOMAIN'
-      defaultValue: ''
+      defaultValue: 'example.auth0.com'
     - label: 'AUTH0_CLIENT_ID'
-      defaultValue: ''
+      defaultValue: 'your_client_id'
     - label: 'AUTH0_CLIENT_SECRET'
-      defaultValue: ''
+      defaultValue: 'your_client_secret'
     - label: 'ACTION_SECRET'
-      defaultValue: ''
+      defaultValue: 'your_action_secret'
 
 modules:
     - name: 'auth0'
