@@ -9,7 +9,7 @@ on:
 jobs:
   updates:
     name: Updated IDs
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -19,7 +19,7 @@ jobs:
         run: scripts/templates/template-id-update-check.sh
   uniqueness:
     name: Unique IDs
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
