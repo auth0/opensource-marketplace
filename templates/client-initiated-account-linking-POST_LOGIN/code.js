@@ -20,6 +20,9 @@
  * - `requested_connection`, the provider which is requested.
  * - `requested_connection_scope`, OPTIONAL list of scopes that are requested by the provider,
  *    if not present it will leverage the configured scopes in the Dashboard.
+ * 
+ * If you intend to perform custom MFA we recommend using another action prior to this to centralize and 
+ * enforce those policies. This Action should be treated as a client.
  *
  * Author: Auth0 Product Architecture
  * Date: 2025-03-21
@@ -35,16 +38,14 @@
  *
  *  - `ALLOWED_CLIENT_IDS` Comma Separated List of all client ids, by default all clients may request when using OIDC
  *  - `DEBUG` `debug` compatible string, this action uses `account-linking:{info,error,verbose}` to differentiate between logs
- *  - `ENFORCE_MFA` - if set to "yes" will require MFA to have been performed on the current session. Default: "yes"
- *  - `ENFORCE_EMAIL_VERIFICATION` - if set to "yes" will require the `primary` account's email is verified. Default: "yes"
+ *  - `ENFORCE_MFA` - if set to "yes" will require MFA to have been performed on the current session, it will also enforce MFA in the nested
+ *     if MFA is not performed but is enrolled on the end-user. Default: "no"
+ *  - `ENFORCE_EMAIL_VERIFICATION` - if set to "yes" will require the `primary` account's email is verified. Default: "no"
  *  - `PIN_IP_ADDRESS` - If set to "yes" will require the transaction complete on same IP Address, this can be finnicky for some customers. Default: "no"
  */
 
 // Required Modules
-const {
-    ManagementClient,
-    PostIdentitiesRequestProviderEnum,
-} = require('auth0');
+const { ManagementClient, PostIdentitiesRequestProviderEnum } = require('auth0');
 const client = require('openid-client');
 const jose = require('jose');
 const { createHash } = require('node:crypto');
@@ -93,27 +94,26 @@ exports.onExecutePostLogin = async (event, api) => {
             const jwksCache = extractCachedJWKS(event, api);
             const response = await validateIdTokenHint(event, api, jwksCache);
             if (response === 'invalid') {
-                logger.error(
-                    'Denying linking request ID_TOKEN_HINT provided was invalid'
-                );
+                logger.error('Denying linking request ID_TOKEN_HINT provided was invalid');
                 api.access.deny(
-                    'ID_TOKEN_HINT Invalid: The `id_token_hint` does not conform to the authorization policy'
+                    'ID_TOKEN_HINT Invalid: The `id_token_hint` does not conform to the authorization policy',
                 );
                 return;
             }
 
             if (event.configuration.ENFORCE_MFA === 'yes') {
                 if (
-                    !event.authentication?.methods?.some(
-                        (method) => method.name === 'mfa'
-                    )
+                    Array.isArray(event.user.enrolledFactors) &&
+                    event.user.enrolledFactors.length > 0
                 ) {
-                    logger.info(
-                        'Denying linking request for %s mfa was not performed',
-                        event.user.user_id
-                    );
-                    api.access.deny('You must perform MFA for account linking');
-                    return;
+                    if (!event.authentication?.methods?.some((method) => method.name === 'mfa')) {
+                        logger.info(
+                            'Denying linking request for %s mfa was not performed in this transaction, a previous action must use .challengeWith, .challengeWithAny',
+                            event.user.user_id,
+                        );
+                        api.access.deny('You must perform MFA for account linking');
+                        return;
+                    }
                 }
             }
 
@@ -123,15 +123,19 @@ exports.onExecutePostLogin = async (event, api) => {
             ) {
                 logger.info(
                     'Denying linking request for %s email is not verified',
-                    event.user.user_id
+                    event.user.user_id,
                 );
-                api.access.deny(
-                    'Email Verification is required for account linking'
-                );
+                api.access.deny('Email Verification is required for account linking');
                 return;
             }
 
             return handleLinkingRequest(event, api);
+        }
+
+        if (isNestedTransaction(event)) {
+            if (event.configuration.ENFORCE_MFA === 'yes') {
+                forceMFAForNestedTransaction(event, api);
+            }
         }
     } catch (err) {
         logger.error('Unexpected Error, %s', err.toString());
@@ -162,22 +166,50 @@ function normalizeEventConfiguration(event) {
     event.configuration = event.configuration || {};
     // prefer configuration
     event.configuration.DEBUG =
-        event.configuration?.DEBUG ||
-        event.secrets?.DEBUG ||
-        'account-linking:error';
+        event.configuration?.DEBUG || event.secrets?.DEBUG || 'account-linking:error';
     event.configuration.ENFORCE_MFA =
-        event.configuration?.ENFORCE_MFA || event.secrets?.ENFORCE_MFA || 'yes';
+        event.configuration?.ENFORCE_MFA || event.secrets?.ENFORCE_MFA || 'no';
     event.configuration.ENFORCE_EMAIL_VERIFICATION =
         event.configuration?.ENFORCE_EMAIL_VERIFICATION ||
         event.secrets?.ENFORCE_EMAIL_VERIFICATION ||
-        'yes';
-    event.configuration.PIN_IP_ADDRESS =
-        event.configuration?.PIN_IP_ADDRESS ||
-        event.secrets?.PIN_IP_ADDRESS ||
         'no';
+    event.configuration.PIN_IP_ADDRESS =
+        event.configuration?.PIN_IP_ADDRESS || event.secrets?.PIN_IP_ADDRESS || 'no';
 }
 
 // Helper Utilities
+
+/**
+ * Function that detects if we are running within a nested transaction
+ * @param {PostLoginEvent} event
+ */
+function isNestedTransaction(event) {
+    const { AUTH0_CLIENT_ID: clientId } = event.secrets;
+
+    if (event.client.client_id === clientId) {
+        return true;
+    }
+}
+
+/**
+ * Forces MFA for the nested transaction
+ * @param {PostLoginEvent} event
+ * @param {PostLoginAPI} api
+ */
+function forceMFAForNestedTransaction(event, api) {
+    if (Array.isArray(event.user.enrolledFactors) && event.user.enrolledFactors.length > 0) {
+        api.authentication.challengeWithAny(
+            event.user.enrolledFactors.map((factor) =>
+                factor.method === 'sms'
+                    ? {
+                          type: 'phone',
+                          options: { preferredMethod: 'sms' },
+                      }
+                    : { type: factor.method },
+            ),
+        );
+    }
+}
 
 /**
  * Check's if this an Account Linking Request
@@ -203,9 +235,7 @@ function isLinkingRequest(event) {
     }
 
     if (!requested_scopes.includes(SCOPES.LINK)) {
-        logger.verbose(
-            'Skipping because requested_scopes does not contain link_account'
-        );
+        logger.verbose('Skipping because requested_scopes does not contain link_account');
         return false;
     }
 
@@ -215,10 +245,7 @@ function isLinkingRequest(event) {
         const allowedClientIds = ALLOWED_CLIENT_IDS.split(',');
 
         if (allowedClientIds.includes(event.client.client_id) === false) {
-            logger.error(
-                'Account Linking is not allowed for %s',
-                event.client.client_id
-            );
+            logger.error('Account Linking is not allowed for %s', event.client.client_id);
             return false;
         }
     }
@@ -247,7 +274,7 @@ async function handleLinkingRequest(event, api) {
     logger.info(
         'Generating authorization request for %s provider %s',
         event.user.user_id,
-        requestedConnection
+        requestedConnection,
     );
 
     /**
@@ -267,14 +294,8 @@ async function handleLinkingRequest(event, api) {
         authorizationParameters['connection_scope'] = requestedConnectionScope;
     }
 
-    logger.info(
-        'Requesting authorization with provider %s',
-        requestedConnection
-    );
-    const authorizeUrl = client.buildAuthorizationUrl(
-        config,
-        authorizationParameters
-    );
+    logger.info('Requesting authorization with provider %s', requestedConnection);
+    const authorizeUrl = client.buildAuthorizationUrl(config, authorizationParameters);
     api.redirect.sendUserTo(authorizeUrl.toString());
 }
 
@@ -291,21 +312,14 @@ async function handleLinkingCallback(event, api) {
     let subject;
 
     try {
-        logger.info(
-            'Attempting callback verification for %s',
-            event.user.user_id
-        );
+        logger.info('Attempting callback verification for %s', event.user.user_id);
 
-        const tokens = await client.authorizationCodeGrant(
-            config,
-            callbackUrl,
-            {
-                expectedState: client.skipStateCheck,
-                idTokenExpected: true,
-                maxAge: 60,
-                pkceCodeVerifier: codeVerifier,
-            }
-        );
+        const tokens = await client.authorizationCodeGrant(config, callbackUrl, {
+            expectedState: client.skipStateCheck,
+            idTokenExpected: true,
+            maxAge: 60,
+            pkceCodeVerifier: codeVerifier,
+        });
 
         const jwksCacheExport = client.getJwksCache(config);
         // Store cached JWTs
@@ -325,7 +339,7 @@ async function handleLinkingCallback(event, api) {
         logger.error(
             'Failed to complete account linking for %s: %s',
             event.user.user_id,
-            err.toString()
+            err.toString(),
         );
         api.access.deny('Failed to complete account linking');
         return;
@@ -383,8 +397,7 @@ function storeCachedJWKS(event, api, updated) {
  */
 async function getOpenIDClientConfig(event, api, jwksCacheInput) {
     const issuer = getAuth0Issuer(event);
-    const { AUTH0_CLIENT_ID: clientId, AUTH0_CLIENT_SECRET: clientSecret } =
-        event.secrets;
+    const { AUTH0_CLIENT_ID: clientId, AUTH0_CLIENT_SECRET: clientSecret } = event.secrets;
     const config = await client.discovery(
         issuer,
         clientId,
@@ -392,7 +405,7 @@ async function getOpenIDClientConfig(event, api, jwksCacheInput) {
         client.ClientSecretPost(clientSecret),
         {
             algorithm: 'oidc',
-        }
+        },
     );
 
     if (jwksCacheInput !== undefined) {
@@ -480,19 +493,14 @@ async function getManagementClient(event, api) {
 
         try {
             const tokenset = await client.clientCredentialsGrant(config, {
-                audience: new URL(
-                    '/api/v2/',
-                    `https://${event.secrets.AUTH0_DOMAIN}`
-                ).toString(),
+                audience: new URL('/api/v2/', `https://${event.secrets.AUTH0_DOMAIN}`).toString(),
             });
 
             const { access_token: accessToken } = tokenset;
             token = accessToken;
 
             if (!token) {
-                logger.error(
-                    'No access token was returned by the server for Management API'
-                );
+                logger.error('No access token was returned by the server for Management API');
                 return null;
             }
 
@@ -503,7 +511,7 @@ async function getManagementClient(event, api) {
             if (result?.type === 'error') {
                 logger.error(
                     'failed to set the token in the cache with error code: %s',
-                    result.code
+                    result.code,
                 );
             }
         } catch (err) {
@@ -555,17 +563,11 @@ function getAuth0Issuer(event) {
  * @param {PostLoginEvent} event
  */
 async function getUniqueTransaction(event) {
-    const { ACTION_SECRET: appSecret, PIN_IP_ADDRESS: pinIp } =
-        event.configuration;
+    const { ACTION_SECRET: appSecret } = event.secrets;
+    const { PIN_IP_ADDRESS: pinIp } = event.configuration;
     // eslint-disable-next-line no-unused-vars
-    const {
-        protocol,
-        requested_scopes,
-        response_type,
-        redirect_uri,
-        state,
-        locale,
-    } = /**{@type {Transaction}} */ event.transaction;
+    const { protocol, requested_scopes, response_type, redirect_uri, state, locale } =
+        /**{@type {Transaction}} */ event.transaction;
     const { id: sessionId } = event.session || {};
     const stableTransaction = [
         event.user.user_id,
@@ -590,7 +592,7 @@ async function getUniqueTransaction(event) {
         transactionHotfix, // ikm
         appSecret, // salt
         transactionInfo, // info
-        64 // len
+        64, // len
     );
 
     return Buffer.from(derivedKey).toString('base64url');
@@ -608,14 +610,14 @@ async function linkAndMakePrimary(event, api, secondaryIdentityUserId) {
     logger.info(
         'Attempting account linking for %s with %s',
         primaryUserId,
-        secondaryIdentityUserId
+        secondaryIdentityUserId,
     );
 
     if (primaryUserId === secondaryIdentityUserId) {
         logger.info(
             'Attempting already performed since %s === %s',
             primaryUserId,
-            secondaryIdentityUserId
+            secondaryIdentityUserId,
         );
         return;
     }
@@ -628,20 +630,15 @@ async function linkAndMakePrimary(event, api, secondaryIdentityUserId) {
     }
 
     try {
-        await client.users.link(
-            { id: primaryUserId },
-            splitSubClaim(secondaryIdentityUserId)
-        );
+        await client.users.link({ id: primaryUserId }, splitSubClaim(secondaryIdentityUserId));
         logger.info(
             'link successful current user %s to %s',
             primaryUserId,
-            secondaryIdentityUserId
+            secondaryIdentityUserId,
         );
         // api.authentication.setPrimaryUser(upstream_sub);
     } catch (err) {
-        logger.error(
-            `unable to link, no changes. error: ${JSON.stringify(err)}`
-        );
+        logger.error(`unable to link, no changes. error: ${JSON.stringify(err)}`);
         return api.access.deny('error linking');
     }
 }
