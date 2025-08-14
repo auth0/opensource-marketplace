@@ -9,6 +9,7 @@ const TRIGGERS = [
     'POST_CHANGE_PASSWORD',
     'SEND_PHONE_MESSAGE',
     'PASSWORD_RESET_POST_CHALLENGE',
+    'CUSTOM_TOKEN_EXCHANGE',
 ];
 
 module.exports = {
