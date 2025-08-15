@@ -9,17 +9,20 @@
 exports.onExecutePostLogin = async (event, api) => {
     // ensure user email is present
     if (!event.user.email) {
-        return api.access.deny('Email is invalid');
+        api.access.deny('Email is invalid');
+        return;
     }
 
     // ensure the user has verified their email address
     if (!event.user.email_verified) {
-        return api.access.deny('Email is unverified');
+        api.access.deny('Email is unverified');
+        return;
     }
 
     // ensure the allowed domains are configured
     if (!event.secrets.ALLOWED_DOMAINS) {
-        return api.access.deny('Configuration error');
+        api.access.deny('Configuration error');
+        return;
     }
 
     // parse the allow list of domain and ensure there is at least one
@@ -27,19 +30,21 @@ exports.onExecutePostLogin = async (event, api) => {
         domain.trim().toLowerCase()
     );
     if (!domains) {
-        return api.access.deny('Configuration error');
+        api.access.deny('Configuration error');
+        return;
     }
 
     // ensure a reasonable format for the email
     const splitEMail = event.user.email.split('@');
     if (splitEMail.length !== 2) {
-        return api.access.deny('Email is invalid');
+        api.access.deny('Email is invalid');
+        return;
     }
 
     // if the email domain is not explicitly in our allow list, deny access
     const domain = splitEMail[1].toLowerCase();
     if (!domains.includes(domain)) {
-        return api.access.deny('Email domain is prohibited');
+        api.access.deny('Email domain is prohibited');
     }
 };
 
