@@ -9,7 +9,6 @@
 exports.onExecutePostLogin = async (event, api) => {
     // ensure user email is present
     if (!event.user.email) {
-        // note that userMessage (the second parameter) is displayed in red on the failed sign-up prompt
         return api.access.deny('Email is invalid');
     }
 
@@ -28,21 +27,18 @@ exports.onExecutePostLogin = async (event, api) => {
         domain.trim().toLowerCase()
     );
     if (!domains) {
-        // note that userMessage (the second parameter) is displayed in red on the failed sign-up prompt
         return api.access.deny('Configuration error');
     }
 
     // ensure a reasonable format for the email
     const splitEMail = event.user.email.split('@');
     if (splitEMail.length !== 2) {
-        // note that userMessage (the second parameter) is displayed in red on the failed sign-up prompt
         return api.access.deny('Email is invalid');
     }
 
     // if the email domain is not explicitly in our allow list, deny access
     const domain = splitEMail[1].toLowerCase();
     if (!domains.includes(domain)) {
-        // note that userMessage (the second parameter) is displayed in red on the failed sign-up prompt
         return api.access.deny('Email domain is prohibited');
     }
 };
