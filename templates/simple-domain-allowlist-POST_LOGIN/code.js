@@ -14,7 +14,7 @@ exports.onExecutePostLogin = async (event, api) => {
 
     // ensure the user has verified their email address
     if (!event.user.email_verified) {
-        api.access.deny('Email is unverified');
+        return api.access.deny('Email is unverified');
     }
 
     // ensure the allowed domains are configured
