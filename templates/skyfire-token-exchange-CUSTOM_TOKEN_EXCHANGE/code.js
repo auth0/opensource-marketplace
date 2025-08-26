@@ -2,7 +2,7 @@ const { jwtVerify, createRemoteJWKSet } = require("jose");
 var validator = require("validator");
 
 // Action Config (dependent on client setup)
-const DB_NAME = "Skyfire"; // Auth0 DB connection
+const DB_NAME = "{{YOUR_CONNECTION_NAME}}"; // Auth0 DB connection
 
 // Skyfire verification details
 const JWKS_URL = "https://app.skyfire.xyz/.well-known/jwks.json"; // Skyfire jwks url

@@ -22,6 +22,7 @@ const UseCase = [
     'ACTION_FEATURE',
     'ENRICH_PROFILE',
     'ACCESS_CONTROL',
+    'ADVANCED_INTEGRATION',
 ];
 
 const configValue = z.object({
