@@ -3,7 +3,7 @@ name: "Skyfire token exchange"
 triggers:
     - "CUSTOM_TOKEN_EXCHANGE"
 useCases:
-    - 'ADVANCED_INTEGRATION'
+    - "ADVANCED_INTEGRATION"
 public: true
 description: "Custom Token Exchange Action to securely exchange Skyfire tokens for Auth0 tokens"
 version: "1.0.0"
