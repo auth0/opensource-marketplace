@@ -1,0 +1,12 @@
+id: '5ad0a454-5431-4689-817f-c32d6a21c493'
+name: 'Skyfire token exchange'
+triggers:
+    - 'CUSTOM_TOKEN_EXCHANGE'
+useCases:
+    - 'ACCESS_CONTROL'
+public: true
+description: 'Custom Token Exchange Action to securely exchange Skyfire tokens for Auth0 tokens'
+version: '1.0.0'
+runtime: 'node22'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/tree/main/templates/skyfire-token-exchange-CUSTOM_TOKEN_EXCHANGE/manifest.yaml'
+notes: 'Add YOUR_CONNECTION_NAME when deploying the Action'

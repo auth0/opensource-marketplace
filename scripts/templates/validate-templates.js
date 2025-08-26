@@ -14,6 +14,7 @@ const IntegrationTrigger = [
     'POST_CHANGE_PASSWORD',
     'SEND_PHONE_MESSAGE',
     'PASSWORD_RESET_POST_CHALLENGE',
+    'CUSTOM_TOKEN_EXCHANGE',
 ];
 
 const UseCase = [
