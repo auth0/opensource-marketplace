@@ -116,7 +116,7 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
             email_verified: true,
             given_name: payload.bid.nameFirst,
             family_name: payload.bid.nameLast,
-            username: payload.bid.skyfireEmail,
+            username: payload.sub,
             name: `${payload.bid.nameFirst} ${payload.bid.nameLast}`,
             nickname: payload.bid.nameFirst,
             verify_email: false,
