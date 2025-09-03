@@ -13,6 +13,8 @@
  * strong validation of the tokens you receive and accept. If you fail to do so, you open
  * yourself up to different attack vectors, such as spoofing or replay attacks, resulting
  * in bad actors being able to authenticate with someone else’s user ID.
+ * https://auth0.com/docs/authenticate/custom-token-exchange#code-samples provides best practices 
+ * for common scenarios for validating incoming subject tokens in a secure and performant way.
  *
  * IMPORTANT: This template must be reviewed and adapted to fit your specific configuration,
  * security, and application requirements. Access to modify this Action code should be strictly

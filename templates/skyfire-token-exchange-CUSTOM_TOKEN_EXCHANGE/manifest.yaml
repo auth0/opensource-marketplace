@@ -8,5 +8,10 @@ public: true
 description: 'Custom Token Exchange Action to securely exchange Skyfire tokens for Auth0 tokens'
 version: '1.0.0'
 runtime: 'node22'
+nodules:
+    - name: 'jose'
+      version: 'latest'
+    - name: 'validator'
+      version: 'latest'
 sourceUrl: 'https://github.com/auth0/opensource-marketplace/tree/main/templates/skyfire-token-exchange-CUSTOM_TOKEN_EXCHANGE/manifest.yaml'
-notes: 'Add YOUR_CONNECTION_NAME when deploying the Action'
+notes: 'Configure DB_NAME, ALLOWED_CLIENT_IDS, ALLOWED_AUDIENCES and ALLOWED_SCOPES when deploying the Action'
