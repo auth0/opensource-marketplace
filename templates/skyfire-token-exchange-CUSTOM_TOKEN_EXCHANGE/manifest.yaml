@@ -8,7 +8,7 @@ public: true
 description: 'Custom Token Exchange Action to securely exchange Skyfire tokens for Auth0 tokens'
 version: '1.0.0'
 runtime: 'node22'
-nodules:
+modules:
     - name: 'jose'
       version: 'latest'
     - name: 'validator'
