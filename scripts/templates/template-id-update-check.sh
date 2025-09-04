@@ -21,7 +21,7 @@ VIOLATIONS=0
 
 if [ "${UPDATED_TEMPLATES}" != "" ]; then
   while IFS= read -r TPL; do
-    if git diff "${BASE_REF}...HEAD" "${TPL}" | egrep '^-.*id|^\+.*id' > /dev/null; then
+    if git diff "${BASE_REF}...HEAD" "${TPL}" | egrep '^[-+]id:' > /dev/null; then
       VIOLATIONS=1
       echo "You must not update the id of pre-existing templates. Revert the id change on: ${TPL}";
     fi
