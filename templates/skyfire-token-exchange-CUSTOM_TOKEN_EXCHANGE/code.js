@@ -9,15 +9,16 @@
  * subject_token that identifies the user for the transaction.
  *
  * Remember that subject_tokens used with Custom Token Exchange can be any token format or
- * type you require, as long as your Action code can interpret them. You must implement
- * strong validation of the tokens you receive and accept. If you fail to do so, you open
- * yourself up to different attack vectors, such as spoofing or replay attacks, resulting
- * in bad actors being able to authenticate with someone else’s user ID.
- * https://auth0.com/docs/authenticate/custom-token-exchange#code-samples provides best practices
- * for common scenarios for validating incoming subject tokens in a secure and performant way.
+ * type you require, as long as your Action code can interpret them. You are responsible
+ * for implementing strong validation of the tokens you receive and accept. Failing to do so
+ * would make you liable for opening yourself up to different attack vectors, such as
+ * spoofing or replay attacks, resulting in bad actors being able to authenticate with someone
+ * else’s user ID.  https://auth0.com/docs/authenticate/custom-token-exchange#code-samples provides
+ * best practices and examples for common scenarios for validating incoming subject tokens
+ * in a secure and performant way.
  *
- * IMPORTANT: This template must be reviewed and adapted to fit your specific configuration,
- * security, and application requirements. Access to modify this Action code should be strictly
+ * IMPORTANT: You must review and adapt this template to fit your specific configuration,
+ * security, and application requirements. Access to modify this Action code must be strictly
  * controlled and limited to authorized personnel.
  */
 
