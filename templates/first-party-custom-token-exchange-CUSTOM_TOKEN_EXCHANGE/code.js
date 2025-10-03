@@ -159,14 +159,6 @@ const validateAudience = (audience, allowedAudiences, api) => {
     }
 };
 
-// Normalize requested scopes to array (RFC 8693 allows space-delimited string or array)
-const normalizeScopes = (scopes) => {
-    if (Array.isArray(scopes)) {
-        return scopes;
-    }
-    return (scopes || '').trim().split(/\s+/).filter(Boolean);
-};
-
 // Validate requested scopes are allowed
 // NOTE: This validates against a flat list of allowed scopes. Ideally we would
 // validate scopes per resource server (audience), but the Actions API does not
@@ -183,20 +175,12 @@ const validateScopes = (requestedScopes, allowedScopes, api) => {
     }
 };
 
-// Validate the token was issued to the client presenting it
-const validateTokenBinding = (payload, clientId, api) => {
-    const tokenClientId = payload.azp || payload.client_id;
-    if (tokenClientId && tokenClientId !== clientId) {
+// Validate organization-bound tokens are not used (CTE does not yet support Organizations)
+const validateOrganization = (payload, api) => {
+    if (payload.org_id) {
         return api.access.rejectInvalidSubjectToken(
-            'The subject token was not issued to the calling client.'
+            'Organization-bound token not eligible for exchange'
         );
-    }
-};
-
-// Validate organization binding when Organizations are in use
-const validateOrganization = (payload, organization, api) => {
-    if (organization && payload.org_id && payload.org_id !== organization.id) {
-        return api.access.rejectInvalidSubjectToken('Organization mismatch');
     }
 };
 
@@ -237,8 +221,7 @@ const verifyToken = async (token, issuer, audience) => {
         issuer: issuer.toString(),
         audience,
         // Restrict to commonly-used signing algorithms to reduce attack surface
-        // Verify your tenant's algorithm by checking /.well-known/openid-configuration
-        // and adjust this list if needed (e.g., add 'ES256' if your tenant uses it)
+        // Auth0 uses RS256 by default, with PS256 available on HRI SKU
         algorithms: ['RS256', 'PS256'],
         clockTolerance: 5,
     });
@@ -259,6 +242,11 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
     // Add additional debug namespaces if DEBUG secret is configured
     if (event.secrets.DEBUG) {
         debug.enable('token-exchange:error,' + event.secrets.DEBUG);
+    }
+
+    // Fast-fail if subject_token is missing
+    if (!event.transaction?.subject_token) {
+        return api.access.deny('invalid_request', 'subject_token is required');
     }
 
     try {
@@ -291,7 +279,7 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
 
         // Validate requested scopes are allowed
         result = validateScopes(
-            normalizeScopes(event.transaction.requested_scopes),
+            event.transaction.requested_scopes || [],
             config.allowedScopes,
             api
         );
@@ -305,12 +293,8 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
             config.subjectTokenAudience
         );
 
-        // Validate token was issued to the calling client
-        result = validateTokenBinding(payload, event.client.client_id, api);
-        if (result) return result;
-
-        // Validate organization binding
-        result = validateOrganization(payload, event.organization, api);
+        // Validate organization-bound tokens are not used
+        result = validateOrganization(payload, api);
         if (result) return result;
 
         // Validate token is not sender-constrained
@@ -322,10 +306,10 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
     } catch (err) {
         // Handle JSON configuration errors explicitly for easier debugging
         if (err instanceof SyntaxError && err.message.includes('JSON')) {
-            const errorMessage =
-                'Configuration error: One of the ALLOWED_* secrets contains invalid JSON.';
-            logger.error(errorMessage);
-            return api.access.deny('server_error', errorMessage);
+            logger.error(
+                'Configuration JSON parse error in allow list secrets'
+            );
+            return api.access.deny('server_error', 'Token exchange failed');
         }
 
         logger.error(`Token exchange failed: ${err.code || err.name}`);
