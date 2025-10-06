@@ -34,9 +34,15 @@
  * - Actions Limitations: https://auth0.com/docs/customize/actions/limitations
  *
  * COMMON SCENARIO:
- * Your Model Context Protocol (MCP) server receives a token from a user. The server needs
- * to call your backend API on behalf of that user. This Action validates the incoming token
- * and issues a new token for the backend API while maintaining the same user identity (sub claim).
+ * A first-party service (resource server, backend service, or Model Context Protocol server)
+ * receives an Auth0 access token from a user. The service needs to call a downstream API on
+ * behalf of that user. This Action validates the incoming token and issues a new token for
+ * the downstream API while maintaining the same user identity (sub claim).
+ *
+ * EXAMPLE USE CASES:
+ * - Resource servers calling backend APIs with user context
+ * - Backend services performing on-behalf-of operations
+ * - Model Context Protocol (MCP) servers accessing APIs for authenticated users
  *
  * WHY THIS PATTERN:
  * - Security: Each API gets tokens specifically scoped for its audience
@@ -52,7 +58,7 @@
  *
  * CONFIGURATION (4 required secrets):
  *
- * SUBJECT_TOKEN_AUDIENCE - Expected audience of incoming tokens (e.g., "https://mcp.example.com")
+ * SUBJECT_TOKEN_AUDIENCE - Expected audience of incoming tokens (e.g., "https://api.example.com")
  * ALLOWED_CLIENT_IDS - JSON array of authorized client IDs (e.g., ["abc123"])
  * ALLOWED_TARGET_AUDIENCES - JSON array of permitted API identifiers (e.g., ["https://api.example.com"])
  * ALLOWED_SCOPES - JSON array of allowed scopes (e.g., ["openid", "read:data"])

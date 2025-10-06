@@ -1,11 +1,11 @@
 id: 'daeda4e8-8da2-4abb-afb5-ac09df0ebb2a'
-name: 'First-party token exchange'
+name: 'On-behalf-of token exchange for first-party apps'
 triggers:
     - 'CUSTOM_TOKEN_EXCHANGE'
 useCases:
     - 'ACCESS_CONTROL'
 public: true
-description: 'Implements RFC 8693 OAuth 2.0 Token Exchange for first-party on-behalf-of flows. Securely exchanges Auth0 access tokens for different API audiences while preserving the original user identity, enabling trusted services to call downstream APIs with delegated authorization and appropriate scopes. Primary use case: Model Context Protocol (MCP) servers that need to access backend APIs on behalf of authenticated users.'
+description: 'Implements RFC 8693 OAuth 2.0 Token Exchange for first-party on-behalf-of flows. Securely exchanges Auth0 access tokens for different API audiences while preserving the original user identity, enabling trusted first-party services to call downstream APIs with delegated authorization and appropriate scopes. Common use cases include resource servers, backend services, and Model Context Protocol (MCP) servers that need to access APIs on behalf of authenticated users.'
 version: '1.0.0'
 runtime: 'node22'
 modules:
@@ -17,7 +17,7 @@ sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/
 notes: |
     **Required Secrets**
 
-    - `SUBJECT_TOKEN_AUDIENCE` - Expected audience of incoming tokens (e.g., "https://mcp.example.com")
+    - `SUBJECT_TOKEN_AUDIENCE` - Expected audience of incoming tokens (e.g., "https://api.example.com")
     - `ALLOWED_CLIENT_IDS` - JSON array of authorized client IDs (e.g., ["abc123"])
     - `ALLOWED_TARGET_AUDIENCES` - JSON array of permitted API identifiers (e.g., ["https://api.example.com"])
     - `ALLOWED_SCOPES` - JSON array of allowed scopes (e.g., ["openid", "read:data"])
