@@ -33,6 +33,6 @@ notes: |
     3. Use JSON array format for ALLOWED_CLIENT_IDS, ALLOWED_TARGET_AUDIENCES, and ALLOWED_SCOPES
     4. Deploy and attach to Custom Token Exchange flow
 
-    **Note:** The `subject_token_type` is configured in the CTE profile and validated by the platform before the Action is invoked.
+    **Note:** This template validates Auth0 access tokens issued by this tenant. The `subject_token_type` is configured in the CTE profile and validated by the platform before the Action is invoked.
 
     See: https://auth0.com/docs/authenticate/custom-token-exchange

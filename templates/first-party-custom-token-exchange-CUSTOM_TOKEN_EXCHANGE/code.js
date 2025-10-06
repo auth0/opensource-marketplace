@@ -10,14 +10,14 @@
  * by taking on the additional responsibility of securely validating the corresponding
  * subject_token that identifies the user for the transaction.
  *
- * Remember that subject_tokens used with Custom Token Exchange can be any token format or
- * type you require, as long as your Action code can interpret them. You are responsible
- * for implementing strong validation of the tokens you receive and accept. Failing to do so
- * would make you liable for opening yourself up to different attack vectors, such as
- * spoofing or replay attacks, resulting in bad actors being able to authenticate with someone
- * else's user ID. https://auth0.com/docs/authenticate/custom-token-exchange#code-samples provides
- * best practices and examples for common scenarios for validating incoming subject tokens
- * in a secure and performant way.
+ * This template validates Auth0 access tokens issued by this tenant. While subject_tokens
+ * used with Custom Token Exchange can be any token format or type you require, you are
+ * responsible for implementing strong validation of the tokens you receive and accept.
+ * Failing to do so would make you liable for opening yourself up to different attack vectors,
+ * such as spoofing or replay attacks, resulting in bad actors being able to authenticate with
+ * someone else's user ID. https://auth0.com/docs/authenticate/custom-token-exchange#code-samples
+ * provides best practices and examples for common scenarios for validating incoming subject
+ * tokens in a secure and performant way.
  *
  * IMPORTANT: You must review and adapt this template to fit your specific configuration,
  * security, and application requirements. Access to modify this Action code must be strictly
@@ -55,6 +55,8 @@
  * The subject token's scopes authorize the user's request TO THIS SERVICE, while the exchanged
  * token's scopes authorize THIS SERVICE's request to a downstream API on the user's behalf.
  * These are separate authorization contexts and typically use different scope vocabularies.
+ * This template does not pass through or map scopes from the subject token and is intended for
+ * first-party confidential clients.
  *
  * CONFIGURATION (4 required secrets):
  *
@@ -266,8 +268,9 @@ const getJWKSClient = (issuer) => {
 
 // Verify incoming Auth0 access token
 const verifyToken = async (token, issuer, audience) => {
+    const issuerText = issuer.toString();
     const { payload } = await jwtVerify(token, getJWKSClient(issuer), {
-        issuer: issuer.toString(),
+        issuer: issuerText,
         audience,
         // Restrict to commonly-used signing algorithms to reduce attack surface
         // Auth0 uses RS256 by default, with PS256 available on HRI SKU
