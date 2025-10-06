@@ -50,13 +50,15 @@
  * token's scopes authorize THIS SERVICE's request to a downstream API on the user's behalf.
  * These are separate authorization contexts and typically use different scope vocabularies.
  *
- * CONFIGURATION (5 required secrets):
+ * CONFIGURATION (4 required secrets):
  *
- * SUBJECT_TOKEN_TYPE - The CTE profile identifier (e.g., "urn:mycompany:mcp-token")
  * SUBJECT_TOKEN_AUDIENCE - Expected audience of incoming tokens (e.g., "https://mcp.example.com")
  * ALLOWED_CLIENT_IDS - JSON array of authorized client IDs (e.g., ["abc123"])
  * ALLOWED_TARGET_AUDIENCES - JSON array of permitted API identifiers (e.g., ["https://api.example.com"])
  * ALLOWED_SCOPES - JSON array of allowed scopes (e.g., ["openid", "read:data"])
+ *
+ * NOTE: subject_token_type is configured in the CTE profile and validated by the platform
+ * before the Action is invoked. You do not need to validate it in your Action code.
  *
  * OPTIONAL:
  *
@@ -117,10 +119,6 @@ const requireSecret = (value, name) => {
 
 // Load and validate configuration from secrets
 const loadConfig = (secrets) => ({
-    subjectTokenType: requireSecret(
-        secrets.SUBJECT_TOKEN_TYPE,
-        'SUBJECT_TOKEN_TYPE'
-    ),
     subjectTokenAudience: requireSecret(
         secrets.SUBJECT_TOKEN_AUDIENCE,
         'SUBJECT_TOKEN_AUDIENCE'
@@ -138,16 +136,6 @@ const loadConfig = (secrets) => ({
         parseArraySecret(secrets.ALLOWED_SCOPES, 'ALLOWED_SCOPES')
     ),
 });
-
-// Validate subject token type matches profile
-const validateTokenType = (actual, expected, api) => {
-    if (actual !== expected) {
-        return api.access.deny(
-            'invalid_request',
-            `subject_token_type must be '${expected}'`
-        );
-    }
-};
 
 // Validate client is authorized
 const validateClient = (clientId, clientName, allowedClients, api) => {
@@ -274,13 +262,9 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
     try {
         const config = loadConfig(event.secrets);
 
-        // Validate subject token type matches profile
-        let result = validateTokenType(
-            event.transaction.subject_token_type,
-            config.subjectTokenType,
-            api
-        );
-        if (result) return result;
+        // NOTE: subject_token_type validation is handled upstream by the Custom Token Exchange
+        // platform when matching the request to the configured CTE profile. The Action receives
+        // requests only after the platform has verified the token type matches the profile.
 
         // Validate client is authorized
         result = validateClient(
