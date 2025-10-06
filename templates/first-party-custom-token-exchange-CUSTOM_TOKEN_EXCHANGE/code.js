@@ -1,5 +1,27 @@
 /**
- * Handler that will be called during the execution of a Custom Token Exchange flow.
+ * @file Template for an Auth0 Action to handle a Custom Token Exchange.
+ * This script implements the common scenario of validating an Auth0 access token,
+ * received as a subject_token, and exchanging it for a new Auth0 access token with
+ * a different audience. This enables first-party on-behalf-of flows for trusted services
+ * calling downstream APIs.
+ *
+ * DISCLAIMER:
+ * Custom Token Exchange gives you the added flexibility to set the user for the transaction
+ * by taking on the additional responsibility of securely validating the corresponding
+ * subject_token that identifies the user for the transaction.
+ *
+ * Remember that subject_tokens used with Custom Token Exchange can be any token format or
+ * type you require, as long as your Action code can interpret them. You are responsible
+ * for implementing strong validation of the tokens you receive and accept. Failing to do so
+ * would make you liable for opening yourself up to different attack vectors, such as
+ * spoofing or replay attacks, resulting in bad actors being able to authenticate with someone
+ * else's user ID. https://auth0.com/docs/authenticate/custom-token-exchange#code-samples provides
+ * best practices and examples for common scenarios for validating incoming subject tokens
+ * in a secure and performant way.
+ *
+ * IMPORTANT: You must review and adapt this template to fit your specific configuration,
+ * security, and application requirements. Access to modify this Action code must be strictly
+ * controlled and limited to authorized personnel.
  *
  * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/first-party-custom-token-exchange-CUSTOM_TOKEN_EXCHANGE ---
  *
