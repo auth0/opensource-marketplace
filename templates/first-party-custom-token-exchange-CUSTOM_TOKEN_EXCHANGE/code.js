@@ -284,8 +284,8 @@ const verifyToken = async (token, issuer, audience) => {
         throw new Error('Token missing valid subject claim');
     }
 
-    // Intentionally not binding subject token to the calling client.
-    // In OBO, the RS (this service) exchanges the user's token it received.
+    // Intentionally not binding the subject token to the calling client.
+    // In OBO the resource server exchanges a user token it received from a different client.
 
     return payload;
 };
