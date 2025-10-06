@@ -201,6 +201,10 @@ const validateOrganization = (payload, api) => {
 };
 
 // Validate token is not sender-constrained (DPoP, mTLS)
+// Upstream clients should not present sender-constrained tokens for exchange, but we
+// reject them here as an additional security layer. Sender-constrained tokens require
+// cryptographic proof of key possession and cannot be safely exchanged without
+// re-binding to the new client's key material.
 const validateTokenConstraints = (payload, api) => {
     if (payload.cnf) {
         return api.access.rejectInvalidSubjectToken(
@@ -210,63 +214,32 @@ const validateTokenConstraints = (payload, api) => {
 };
 
 /**
- * Perform authorization checks for the token exchange request.
+ * Authorize the requested scopes for the token exchange.
  *
  * CUSTOMIZATION POINT:
- * This function implements a simple authorization model suitable for first-party confidential
- * clients. It validates that the calling client, target audience, and requested scopes are
- * explicitly allowed.
+ * This function implements a simple scope authorization model that validates requested
+ * scopes against an allow-list, without mapping from the subject token's scopes.
  *
  * IMPORTANT AUTHORIZATION SEMANTICS:
- * - The requested scopes are granted directly without mapping from the subject token's scopes
- * - This assumes the first-party service (Client A) is authorized to request specific scopes
- *   for the target audience (API B), regardless of what scopes were on the incoming token
- * - This is appropriate when scopes are internal concepts that don't map 1:1 across services
+ * - The requested scopes are granted directly, independent of the subject token's scopes
+ * - This assumes the first-party service is authorized to request specific scopes for the
+ *   target audience, regardless of what scopes were on the incoming token
+ * - This is appropriate when scopes are internal API concepts that don't map 1:1 across services
  *
  * WHEN TO CUSTOMIZE:
- * You may need to modify this function if:
- * - You need scope mapping (e.g., "read:users" on token A → "read:profile" on token B)
- * - You need fine-grained authorization based on token claims (e.g., user roles, org membership)
- * - You need to validate relationships between audiences and scopes
- * - You need to enforce additional business logic for authorization
+ * You may need to modify this function if you need:
+ * - Scope mapping (e.g., "read:users" on token A → "read:profile" on token B)
+ * - Fine-grained authorization based on token claims (e.g., user roles, org membership)
+ * - Audience-specific scope validation or relationships between audiences and scopes
  *
- * ASSUMPTIONS:
- * - The calling client is a first-party confidential client (cannot be enforced in code)
- * - The subject token has already been validated by the first-party service before exchange
- * - Internal scopes for downstream APIs are managed separately from user-facing scopes
- *
- * @param {Object} event - The token exchange event
+ * @param {string[]} requestedScopes - Scopes requested in the token exchange
+ * @param {Object} subjectTokenPayload - Decoded JWT payload from the subject token
  * @param {Object} config - Parsed configuration from secrets
  * @param {Object} api - Auth0 API object
  * @returns {Object|undefined} - Returns api.access.deny() result if unauthorized, undefined if authorized
  */
-const performAuthorization = (event, config, api) => {
-    // Validate calling client is authorized to perform token exchange
-    let result = validateClient(
-        event.client.client_id,
-        event.client.name,
-        config.allowedClients,
-        api
-    );
-    if (result) return result;
-
-    // Validate target audience is permitted
-    result = validateAudience(
-        event.resource_server?.identifier,
-        config.allowedAudiences,
-        api
-    );
-    if (result) return result;
-
-    // Validate requested scopes are allowed
-    // NOTE: This validates against a flat list, not a mapping from subject token scopes
-    // Customize here if you need scope mapping or audience-specific scope validation
-    result = validateScopes(
-        event.transaction.requested_scopes || [],
-        config.allowedScopes,
-        api
-    );
-    if (result) return result;
+const authorizeScopes = (requestedScopes, subjectTokenPayload, config, api) => {
+    return validateScopes(requestedScopes, config.allowedScopes, api);
 };
 
 // Get Auth0 issuer URL for the current tenant
@@ -332,8 +305,21 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
         // platform when matching the request to the configured CTE profile. The Action receives
         // requests only after the platform has verified the token type matches the profile.
 
-        // Perform authorization checks (customize performAuthorization function for your needs)
-        const result = performAuthorization(event, config, api);
+        // Validate calling client is authorized
+        let result = validateClient(
+            event.client.client_id,
+            event.client.name,
+            config.allowedClients,
+            api
+        );
+        if (result) return result;
+
+        // Validate target audience is permitted
+        result = validateAudience(
+            event.resource_server?.identifier,
+            config.allowedAudiences,
+            api
+        );
         if (result) return result;
 
         // Cryptographically verify incoming Auth0 access token
@@ -350,6 +336,15 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
 
         // Validate token is not sender-constrained
         result = validateTokenConstraints(payload, api);
+        if (result) return result;
+
+        // Authorize requested scopes (customize authorizeScopes function for your needs)
+        result = authorizeScopes(
+            event.transaction.requested_scopes || [],
+            payload,
+            config,
+            api
+        );
         if (result) return result;
 
         // Set user identity for new token (preserves original user)
