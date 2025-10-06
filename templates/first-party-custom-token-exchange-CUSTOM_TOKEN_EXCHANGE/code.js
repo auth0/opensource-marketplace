@@ -99,6 +99,8 @@ const JOSE_ERROR_MESSAGES = {
     ERR_JWKS_NO_MATCHING_KEY: 'No matching signing key found for token',
     ERR_JWKS_MULTIPLE_MATCHING_KEYS: 'Multiple matching signing keys found',
     ERR_JWT_INVALID: 'The subject token is invalid',
+    ERR_JWT_AUDIENCE_MISMATCH: 'Token audience does not match expected value',
+    ERR_JWT_ISSUER_MISMATCH: 'Token issuer does not match expected value',
 };
 
 // Parse and validate JSON array secret
@@ -281,6 +283,9 @@ const verifyToken = async (token, issuer, audience) => {
     if (!payload.sub || typeof payload.sub !== 'string') {
         throw new Error('Token missing valid subject claim');
     }
+
+    // Intentionally not binding subject token to the calling client.
+    // In OBO, the RS (this service) exchanges the user's token it received.
 
     return payload;
 };
