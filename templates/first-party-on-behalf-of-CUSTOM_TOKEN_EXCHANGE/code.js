@@ -101,7 +101,7 @@ const JOSE_ERROR_MESSAGES = {
 };
 
 const JWKS_TTL_MS = 600_000; // 10 minutes
-const JWKS_TIMEOUT_MS = 3_000; // strict network timeout
+const JWKS_TIMEOUT_MS = 5_000; // network timeout; well under Actions 20s limit
 const ALLOWED_JWS_ALGS = ['RS256', 'PS256'];
 
 // In-process cache to avoid repeated JSON parse in a hot container
