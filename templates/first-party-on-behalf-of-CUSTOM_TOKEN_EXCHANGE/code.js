@@ -122,6 +122,7 @@ const ALLOWED_JWS_ALGS = ['RS256', 'PS256'];
 
 // In-process cache to avoid repeated JSON parse in a hot container
 const localJwksResolverCache = new Map(); // issuerHost -> { resolver, exp }
+const inflightJwks = new Map(); // issuerHost -> Promise<resolver>
 
 // Best-effort cache get; never throws
 function safeCacheGet(api, key) {
@@ -181,6 +182,7 @@ async function fetchJWKS(issuer) {
 }
 
 // Get JOSE key resolver with tiered caching: local memo -> api.cache -> network fetch
+// Coalesces concurrent fetches to avoid thundering herd on cold start
 // Never throws due to cache I/O; only network/format errors bubble up
 async function getJwksResolver(issuer, api, { forceRefresh = false } = {}) {
     const host = issuer.host;
@@ -189,6 +191,8 @@ async function getJwksResolver(issuer, api, { forceRefresh = false } = {}) {
     if (!forceRefresh) {
         const local = localJwksResolverCache.get(host);
         if (local?.exp > now) return local.resolver;
+        const pending = inflightJwks.get(host);
+        if (pending) return pending;
 
         const rec = safeCacheGet(api, cacheKeyForIssuer(issuer));
         if (rec?.value) {
@@ -196,10 +200,7 @@ async function getJwksResolver(issuer, api, { forceRefresh = false } = {}) {
                 const jwksJson = JSON.parse(rec.value);
                 const resolver = createLocalJWKSet(jwksJson);
                 const ttlHint = Math.max(0, (rec.expires_at ?? 0) - now);
-                const localTtl = Math.min(
-                    JWKS_TTL_MS,
-                    ttlHint || JWKS_TTL_MS
-                );
+                const localTtl = Math.min(JWKS_TTL_MS, ttlHint || JWKS_TTL_MS);
                 localJwksResolverCache.set(host, {
                     resolver,
                     exp: now + localTtl,
@@ -211,16 +212,30 @@ async function getJwksResolver(issuer, api, { forceRefresh = false } = {}) {
         }
     }
 
-    const jwksJson = await fetchJWKS(issuer);
-    safeCacheSet(api, cacheKeyForIssuer(issuer), JSON.stringify(jwksJson), {
-        ttl: JWKS_TTL_MS,
-    });
-    const resolver = createLocalJWKSet(jwksJson);
-    localJwksResolverCache.set(host, { resolver, exp: now + JWKS_TTL_MS });
-    return resolver;
+    const fetchPromise = (async () => {
+        const jwksJson = await fetchJWKS(issuer);
+        safeCacheSet(
+            api,
+            cacheKeyForIssuer(issuer),
+            JSON.stringify(jwksJson),
+            { ttl: JWKS_TTL_MS }
+        );
+        const resolver = createLocalJWKSet(jwksJson);
+        localJwksResolverCache.set(host, {
+            resolver,
+            exp: Date.now() + JWKS_TTL_MS,
+        });
+        return resolver;
+    })();
+    inflightJwks.set(host, fetchPromise);
+    try {
+        return await fetchPromise;
+    } finally {
+        inflightJwks.delete(host);
+    }
 }
 
-// Verify JWT with cached JWKS; retries once on key rotation
+// Verify JWT with cached JWKS; retries once on key rotation or signature failure
 async function verifyWithCachedJWKS(token, issuer, audience, api) {
     const issuerText = issuer.toString();
     try {
@@ -235,7 +250,8 @@ async function verifyWithCachedJWKS(token, issuer, audience, api) {
     } catch (e) {
         if (
             e?.code === 'ERR_JWKS_NO_MATCHING_KEY' ||
-            e?.code === 'ERR_JWKS_MULTIPLE_MATCHING_KEYS'
+            e?.code === 'ERR_JWKS_MULTIPLE_MATCHING_KEYS' ||
+            e?.code === 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED'
         ) {
             const getKey = await getJwksResolver(issuer, api, {
                 forceRefresh: true,
@@ -446,7 +462,9 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
         );
 
         if (!payload.sub || typeof payload.sub !== 'string') {
-            throw new Error('Token missing valid subject claim');
+            return api.access.rejectInvalidSubjectToken(
+                'Token missing valid subject claim'
+            );
         }
 
         // Intentionally not binding the subject token to the calling client.
