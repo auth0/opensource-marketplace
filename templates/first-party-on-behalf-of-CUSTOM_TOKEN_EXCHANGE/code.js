@@ -212,6 +212,10 @@ async function getJwksResolver(issuer, api, { forceRefresh = false } = {}) {
         }
     }
 
+    // Coalesce refreshes too
+    const existing = inflightJwks.get(host);
+    if (existing) return existing;
+
     const fetchPromise = (async () => {
         const jwksJson = await fetchJWKS(issuer);
         safeCacheSet(
@@ -235,7 +239,7 @@ async function getJwksResolver(issuer, api, { forceRefresh = false } = {}) {
     }
 }
 
-// Verify JWT with cached JWKS; retries once on key rotation or signature failure
+// Verify JWT with cached JWKS; retries once on key rotation signals
 async function verifyWithCachedJWKS(token, issuer, audience, api) {
     const issuerText = issuer.toString();
     try {
@@ -250,8 +254,7 @@ async function verifyWithCachedJWKS(token, issuer, audience, api) {
     } catch (e) {
         if (
             e?.code === 'ERR_JWKS_NO_MATCHING_KEY' ||
-            e?.code === 'ERR_JWKS_MULTIPLE_MATCHING_KEYS' ||
-            e?.code === 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED'
+            e?.code === 'ERR_JWKS_MULTIPLE_MATCHING_KEYS'
         ) {
             const getKey = await getJwksResolver(issuer, api, {
                 forceRefresh: true,
@@ -459,6 +462,12 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
             config.subjectTokenAudience,
             api
         );
+
+        if (!payload.sub || typeof payload.sub !== 'string') {
+            return api.access.rejectInvalidSubjectToken(
+                'Token missing valid subject claim'
+            );
+        }
 
         // Intentionally not binding the subject token to the calling client.
         // In OBO the resource server exchanges a user token it received from a different client.
