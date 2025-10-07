@@ -23,7 +23,7 @@
  * security, and application requirements. Access to modify this Action code must be strictly
  * controlled and limited to authorized personnel.
  *
- * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/first-party-custom-token-exchange-CUSTOM_TOKEN_EXCHANGE ---
+ * --- AUTH0 ACTIONS TEMPLATE https://github.com/auth0/opensource-marketplace/blob/main/templates/first-party-on-behalf-of-CUSTOM_TOKEN_EXCHANGE ---
  *
  * Implements RFC 8693 OAuth 2.0 Token Exchange for first-party on-behalf-of flows.
  * Exchanges Auth0 access tokens for different API audiences while preserving user identity.

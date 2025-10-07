@@ -13,7 +13,7 @@ modules:
       version: '6.1.0'
     - name: 'debug'
       version: '4.4.3'
-sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/first-party-custom-token-exchange-CUSTOM_TOKEN_EXCHANGE'
+sourceUrl: 'https://github.com/auth0/opensource-marketplace/blob/main/templates/first-party-on-behalf-of-CUSTOM_TOKEN_EXCHANGE'
 notes: |
     **Required Secrets**
 
