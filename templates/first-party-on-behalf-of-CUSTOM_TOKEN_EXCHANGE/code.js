@@ -76,7 +76,7 @@
  * @param {CustomTokenExchangeAPI} api - Interface to control the exchange flow
  */
 
-const { jwtVerify, createRemoteJWKSet } = require('jose');
+const { jwtVerify, createLocalJWKSet } = require('jose');
 const debug = require('debug');
 
 // Always enable error logging, allow DEBUG secret to enable more verbose logging
@@ -87,8 +87,11 @@ const logger = {
     info: debug('token-exchange:info'),
 };
 
-// Cache for JWKS clients (persists across warm container invocations)
-const jwksCache = new Map();
+// In-process cache of JWKS resolvers keyed by issuer host
+const localJwksResolverCache = new Map();
+const ALLOWED_JWS_ALGS = ['RS256', 'PS256'];
+const JWKS_TTL_MS = 600000; // 10 minutes
+const JWKS_TIMEOUT_MS = 3000;
 
 // jose error code to user-friendly message mapping
 const JOSE_ERROR_MESSAGES = {
@@ -251,43 +254,113 @@ const getAuth0Issuer = (event) => {
     return new URL(`https://${event.request.hostname}/`);
 };
 
-// Get or create JWKS client for issuer
-const getJWKSClient = (issuer) => {
-    const issuerText = issuer.toString();
-    let client = jwksCache.get(issuerText);
-    if (!client) {
-        // Actions have a 20 second execution limit (see https://auth0.com/docs/customize/actions/limitations)
-        // Set cooldown to 15s to ensure JWKS refresh completes within the timeout
-        client = createRemoteJWKSet(new URL('.well-known/jwks.json', issuer), {
-            timeoutDuration: 5000,
-            cooldownDuration: 15000,
-        });
-        jwksCache.set(issuerText, client);
-        logger.info(`Initialized JWKS client for ${issuerText}`);
+// Fetch the issuer's JWKS with a strict timeout
+const fetchJWKS = async (issuer) => {
+    const url = new URL('.well-known/jwks.json', issuer);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), JWKS_TIMEOUT_MS);
+    try {
+        const res = await fetch(url.toString(), { signal: controller.signal });
+        if (!res.ok) {
+            throw Object.assign(new Error('Failed to fetch JWKS'), {
+                code: 'ERR_JWKS_NO_MATCHING_KEY',
+            });
+        }
+        const json = await res.json();
+        if (!Array.isArray(json?.keys)) {
+            throw Object.assign(new Error('Malformed JWKS'), {
+                code: 'ERR_JWKS_NO_MATCHING_KEY',
+            });
+        }
+        return json;
+    } finally {
+        clearTimeout(timer);
     }
-    return client;
 };
 
-// Verify incoming Auth0 access token
-const verifyToken = async (token, issuer, audience) => {
-    const issuerText = issuer.toString();
-    const { payload } = await jwtVerify(token, getJWKSClient(issuer), {
-        issuer: issuerText,
-        audience,
-        // Restrict to commonly-used signing algorithms to reduce attack surface
-        // Auth0 uses RS256 by default, with PS256 available on HRI SKU
-        algorithms: ['RS256', 'PS256'],
-        clockTolerance: 5,
-    });
+// Build or load a JOSE resolver from JWKS JSON; caches locally and in Actions cache
+const getJwksResolver = async (issuer, api, { forceRefresh = false } = {}) => {
+    const issuerHost = issuer.host;
+    const local = localJwksResolverCache.get(issuerHost);
+    if (local?.expiresAt > Date.now() && !forceRefresh) return local.resolver;
 
-    if (!payload.sub || typeof payload.sub !== 'string') {
-        throw new Error('Token missing valid subject claim');
+    let jwksJson;
+    const cacheKey = `jwksset:${issuerHost}`;
+    if (!forceRefresh) {
+        const rec = api.cache.get(cacheKey);
+        if (rec?.value) {
+            try {
+                jwksJson = JSON.parse(rec.value);
+            } catch {
+                /* fall through */
+            }
+            if (jwksJson) {
+                const resolver = createLocalJWKSet(jwksJson);
+                localJwksResolverCache.set(issuerHost, {
+                    resolver,
+                    expiresAt: Date.now() + JWKS_TTL_MS,
+                });
+                return resolver;
+            }
+        }
     }
 
-    // Intentionally not binding the subject token to the calling client.
-    // In OBO the resource server exchanges a user token it received from a different client.
+    jwksJson = await fetchJWKS(issuer);
+    api.cache.set(cacheKey, JSON.stringify(jwksJson), { ttl: JWKS_TTL_MS });
+    const resolver = createLocalJWKSet(jwksJson);
+    localJwksResolverCache.set(issuerHost, {
+        resolver,
+        expiresAt: Date.now() + JWKS_TTL_MS,
+    });
+    return resolver;
+};
 
-    return payload;
+// Verify incoming Auth0 access token using a JWKS resolver
+const verifyToken = async (token, issuer, audience, api) => {
+    const issuerText = issuer.toString();
+    // First pass with cached resolver
+    try {
+        const getKey = await getJwksResolver(issuer, api);
+        const { payload } = await jwtVerify(token, getKey, {
+            issuer: issuerText,
+            audience,
+            algorithms: ALLOWED_JWS_ALGS,
+            clockTolerance: 5,
+        });
+        if (!payload.sub || typeof payload.sub !== 'string') {
+            throw new Error('Token missing valid subject claim');
+        }
+
+        // Intentionally not binding the subject token to the calling client.
+        // In OBO the resource server exchanges a user token it received from a different client.
+
+        return payload;
+    } catch (e) {
+        // If the kid is new, refresh JWKS once and retry
+        if (
+            e?.code === 'ERR_JWKS_NO_MATCHING_KEY' ||
+            e?.code === 'ERR_JWKS_MULTIPLE_MATCHING_KEYS'
+        ) {
+            const getKey = await getJwksResolver(issuer, api, {
+                forceRefresh: true,
+            });
+            const { payload } = await jwtVerify(token, getKey, {
+                issuer: issuerText,
+                audience,
+                algorithms: ALLOWED_JWS_ALGS,
+                clockTolerance: 5,
+            });
+            if (!payload.sub || typeof payload.sub !== 'string') {
+                throw new Error('Token missing valid subject claim');
+            }
+
+            // Intentionally not binding the subject token to the calling client.
+            // In OBO the resource server exchanges a user token it received from a different client.
+
+            return payload;
+        }
+        throw e;
+    }
 };
 
 /**
@@ -335,7 +408,8 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
         const payload = await verifyToken(
             event.transaction.subject_token,
             issuer,
-            config.subjectTokenAudience
+            config.subjectTokenAudience,
+            api
         );
 
         // Validate organization-bound tokens are not used
