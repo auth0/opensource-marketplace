@@ -120,10 +120,10 @@ const JWKS_TTL_MS = 600_000; // 10 minutes
 const JWKS_TIMEOUT_MS = 3_000; // strict network timeout
 const ALLOWED_JWS_ALGS = ['RS256', 'PS256'];
 
-// tiny in-process memo to avoid repeated JSON parse in a hot container
+// In-process cache to avoid repeated JSON parse in a hot container
 const localJwksResolverCache = new Map(); // issuerHost -> { resolver, exp }
 
-/** Best-effort get. Never throws; returns {value, expires_at} or null. */
+// Best-effort cache get; never throws
 function safeCacheGet(api, key) {
     try {
         const rec = api.cache.get(key);
@@ -133,7 +133,7 @@ function safeCacheGet(api, key) {
     }
 }
 
-/** Best-effort set. Never throws; logs non-success but continues. */
+// Best-effort cache set; never throws, logs non-success
 function safeCacheSet(api, key, value, { ttl, expires_at } = {}) {
     try {
         const opts =
@@ -151,10 +151,12 @@ function safeCacheSet(api, key, value, { ttl, expires_at } = {}) {
     }
 }
 
+// Generate cache key for issuer
 function cacheKeyForIssuer(issuer) {
     return `jwksset:${issuer.host}`;
 }
 
+// Fetch JWKS with strict timeout
 async function fetchJWKS(issuer) {
     const url = new URL('.well-known/jwks.json', issuer);
     const controller = new AbortController();
@@ -178,11 +180,8 @@ async function fetchJWKS(issuer) {
     }
 }
 
-/**
- * Returns a JOSE key resolver for this issuer.
- * Order: local memo -> api.cache -> network fetch (then write-through both caches).
- * Never throws due to cache I/O; only network/format errors bubble up.
- */
+// Get JOSE key resolver with tiered caching: local memo -> api.cache -> network fetch
+// Never throws due to cache I/O; only network/format errors bubble up
 async function getJwksResolver(issuer, api, { forceRefresh = false } = {}) {
     const host = issuer.host;
     const now = Date.now();
@@ -221,7 +220,7 @@ async function getJwksResolver(issuer, api, { forceRefresh = false } = {}) {
     return resolver;
 }
 
-/** Use inside your verify flow; retries once on plausible rotation. */
+// Verify JWT with cached JWKS; retries once on key rotation
 async function verifyWithCachedJWKS(token, issuer, audience, api) {
     const issuerText = issuer.toString();
     try {
