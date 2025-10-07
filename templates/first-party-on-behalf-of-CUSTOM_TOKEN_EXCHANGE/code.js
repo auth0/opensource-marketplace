@@ -100,8 +100,16 @@ const JOSE_ERROR_MESSAGES = {
     ERR_JWT_ISSUER_MISMATCH: 'Token issuer does not match expected value',
 };
 
+const JWKS_TTL_MS = 600_000; // 10 minutes
+const JWKS_TIMEOUT_MS = 3_000; // strict network timeout
+const ALLOWED_JWS_ALGS = ['RS256', 'PS256'];
+
+// In-process cache to avoid repeated JSON parse in a hot container
+const localJwksResolverCache = new Map(); // issuerHost -> { resolver, exp }
+const inflightJwks = new Map(); // issuerHost -> Promise<resolver>
+
 /**
- * Safe JWKS caching with Actions api.cache
+ * Safe JWKS caching with Actions `api.cache`
  * Reference: https://auth0.com/docs/authenticate/custom-token-exchange#api-cache
  *
  * Contract:
@@ -115,14 +123,6 @@ const JOSE_ERROR_MESSAGES = {
  * - Cache is short-lived and scoped to the Custom Token Exchange trigger.
  * - Items may be evicted early; always be prepared to fetch JWKS again.
  */
-
-const JWKS_TTL_MS = 600_000; // 10 minutes
-const JWKS_TIMEOUT_MS = 3_000; // strict network timeout
-const ALLOWED_JWS_ALGS = ['RS256', 'PS256'];
-
-// In-process cache to avoid repeated JSON parse in a hot container
-const localJwksResolverCache = new Map(); // issuerHost -> { resolver, exp }
-const inflightJwks = new Map(); // issuerHost -> Promise<resolver>
 
 // Best-effort cache get; never throws
 function safeCacheGet(api, key) {
@@ -411,7 +411,6 @@ const authorizeScopes = (requestedScopes, subjectTokenPayload, config, api) => {
     return validateScopes(requestedScopes, config.allowedScopes, api);
 };
 
-
 /**
  * Handles the Custom Token Exchange request.
  * @param {Event} event - Details about the incoming token exchange request.
@@ -460,12 +459,6 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
             config.subjectTokenAudience,
             api
         );
-
-        if (!payload.sub || typeof payload.sub !== 'string') {
-            return api.access.rejectInvalidSubjectToken(
-                'Token missing valid subject claim'
-            );
-        }
 
         // Intentionally not binding the subject token to the calling client.
         // In OBO the resource server exchanges a user token it received from a different client.
