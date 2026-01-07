@@ -37,7 +37,8 @@
  * A first-party service (resource server, backend service, or Model Context Protocol server)
  * receives an Auth0 access token from a user. The service needs to call a downstream API on
  * behalf of that user. This Action validates the incoming token and issues a new token for
- * the downstream API while maintaining the same user identity (sub claim).
+ * the downstream API while maintaining the same user identity (sub claim) and organization
+ * context (org_id claim, if present).
  *
  * EXAMPLE USE CASES:
  * - Resource servers calling backend APIs with user context
@@ -47,7 +48,7 @@
  * WHY THIS PATTERN:
  * - Security: Each API gets tokens specifically scoped for its audience
  * - Least Privilege: Control exactly which scopes are granted to downstream services
- * - Auditability: Preserve user identity across the entire request chain
+ * - Auditability: Preserve user identity and organization context across the entire request chain
  * - Best Practice: Follows RFC 8693 standard for delegated authorization
  *
  * UNDERSTANDING SCOPE DECOUPLING:
@@ -195,15 +196,6 @@ const validateScopes = (requestedScopes, allowedScopes, api) => {
     }
 };
 
-// Validate organization-bound tokens are not used (CTE does not yet support Organizations)
-const validateOrganization = (payload, api) => {
-    if (payload.org_id) {
-        return api.access.rejectInvalidSubjectToken(
-            'Organization-bound token not eligible for exchange'
-        );
-    }
-};
-
 // Validate token is not sender-constrained (DPoP, mTLS)
 // Upstream clients should not present sender-constrained tokens for exchange, but we
 // reject them here as an additional security layer. Sender-constrained tokens require
@@ -338,10 +330,6 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
             config.subjectTokenAudience
         );
 
-        // Validate organization-bound tokens are not used
-        result = validateOrganization(payload, api);
-        if (result) return result;
-
         // Validate token is not sender-constrained
         result = validateTokenConstraints(payload, api);
         if (result) return result;
@@ -357,6 +345,12 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
 
         // Set user identity for new token (preserves original user)
         api.authentication.setUserById(payload.sub);
+
+        // Set organization context if present in subject token.
+        // If your APIs have mixed org/non-org usage, you may need to add conditional logic here.
+        if (payload.org_id) {
+            api.authentication.setOrganization(payload.org_id);
+        }
     } catch (err) {
         // Handle JSON configuration errors explicitly for easier debugging
         if (err instanceof SyntaxError && err.message.includes('JSON')) {
