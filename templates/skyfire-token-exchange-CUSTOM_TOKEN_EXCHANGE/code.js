@@ -115,7 +115,7 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
         DB_NAME,
         {
             user_id: payload.sub,
-            email: payload.bid.skyfireEmail,
+            email: payload.bid.email,
             email_verified: true,
             given_name: payload.bid.nameFirst,
             family_name: payload.bid.nameLast,
@@ -208,13 +208,13 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
                 };
             }
 
-            // 2. Validate skyfireEmail format.
+            // 2. Validate email format.
             if (
                 !payload.bid ||
-                !validator.isEmail(String(payload.bid.skyfireEmail))
+                !validator.isEmail(String(payload.bid.email))
             ) {
                 const message =
-                    "Invalid email format in 'bid.skyfireEmail' claim.";
+                    "Invalid email format in 'bid.email' claim.";
                 console.log(`Validation failed: ${message}`);
                 return {
                     isValid: false,
