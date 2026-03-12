@@ -115,13 +115,13 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
         DB_NAME,
         {
             user_id: payload.sub,
-            email: payload.bid.email,
+            email: payload.hid.email,
             email_verified: true,
-            given_name: payload.bid.nameFirst,
-            family_name: payload.bid.nameLast,
+            given_name: payload.hid.given_name,
+            family_name: payload.hid.family_name,
             username: payload.sub,
-            name: `${payload.bid.nameFirst} ${payload.bid.nameLast}`,
-            nickname: payload.bid.nameFirst,
+            name: `${payload.hid.given_name} ${payload.hid.family_name}`,
+            nickname: payload.hid.given_name,
             verify_email: false,
         },
         {
@@ -197,8 +197,8 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
             // -- Additional Custom Validations --
 
             // 1. Validate 'typ' header: must be one of the expected types.
-            if (!['kya+JWT', 'kya+pay+JWT'].includes(protectedHeader.typ)) {
-                const message = 'typ should be one of kya+JWT or kya+pay+JWT.';
+            if (!['kya+jwt', 'kya+pay+jwt'].includes(protectedHeader.typ)) {
+                const message = 'typ should be one of kya+jwt or kya+pay+jwt.';
                 console.log(
                     `Validation failed: ${message} (got: ${protectedHeader.typ})`
                 );
@@ -210,11 +210,11 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
 
             // 2. Validate email format.
             if (
-                !payload.bid ||
-                !validator.isEmail(String(payload.bid.email))
+                !payload.hid ||
+                !validator.isEmail(String(payload.hid.email))
             ) {
                 const message =
-                    "Invalid email format in 'bid.email' claim.";
+                    "Invalid email format in 'hid.email' claim.";
                 console.log(`Validation failed: ${message}`);
                 return {
                     isValid: false,
