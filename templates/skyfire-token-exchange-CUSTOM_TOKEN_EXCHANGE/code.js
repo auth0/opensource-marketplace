@@ -209,12 +209,8 @@ exports.onExecuteCustomTokenExchange = async (event, api) => {
             }
 
             // 2. Validate email format.
-            if (
-                !payload.hid ||
-                !validator.isEmail(String(payload.hid.email))
-            ) {
-                const message =
-                    "Invalid email format in 'hid.email' claim.";
+            if (!payload.hid || !validator.isEmail(String(payload.hid.email))) {
+                const message = "Invalid email format in 'hid.email' claim.";
                 console.log(`Validation failed: ${message}`);
                 return {
                     isValid: false,
