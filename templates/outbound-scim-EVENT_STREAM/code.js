@@ -9,7 +9,7 @@
  * userName search when a destination rejects externalId filtering.
  *
  * Setup and how it works:
- * https://auth0.com/docs/customize/events/orchestrate-business-workflows#set-up-scim-provisioning
+ * https://auth0.com/docs/customize/events/send-outbound-scim
  *
  * BEFORE YOU SAVE: add these Action Secrets (Secrets panel, key icon).
  *   REQUIRED
