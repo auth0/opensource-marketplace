@@ -11,9 +11,9 @@ jobs:
         runs-on: ubuntu-latest
         name: Install & Cache modules
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
             - name: Cache node modules
-              uses: actions/cache@v3
+              uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
               env:
                   cache-name: cache-node-modules
               with:
@@ -22,7 +22,7 @@ jobs:
                   key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-npm-
-            - uses: actions/setup-node@v3
+            - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
               with:
                   node-version: '18.x'
                   always-auth: true
@@ -35,15 +35,15 @@ jobs:
         name: Lint
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
               with:
                   fetch-depth: 0
             - name: Use node.js
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
               with:
                   node-version: '18'
             - name: Restore Cached Dependencies
-              uses: actions/cache@v3
+              uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
               id: cache-dependencies
               with:
                   path: |
@@ -61,15 +61,15 @@ jobs:
 
         steps:
             - name: Check Out Repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
             - name: Set Up Node.js
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
               with:
                   node-version: 18
 
             - name: Restore Cached Dependencies
-              uses: actions/cache@v3
+              uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
               id: cache-dependencies
               with:
                   path: |
