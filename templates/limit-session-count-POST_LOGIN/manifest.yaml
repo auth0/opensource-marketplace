@@ -1,0 +1,21 @@
+id: "2b876bd2-d7e0-4249-99d1-4d6df596ef66"
+name: "Limit Session Count"
+triggers:
+	- "POST_LOGIN"
+useCases:
+	- 'ACCESS_CONTROL'
+public: true
+description: "Control the allowed number of simultaneous sessions for a single user"
+version: "1.0.0"
+runtime: "node18"
+sourceUrl: "https://github.com/auth0/opensource-marketplace/tree/main/templates/limit-session-count-POST_LOGIN/manifest.yaml"
+notes: ""
+secrets:
+	- label: 'REDIS_URL'
+	- label: 'REDIS_PASSWORD'
+	- label: 'SESSION_LIFETIME'
+	- lable: 'MAX_SESSION'
+	  defaultValue: 1
+modules:
+	- name: 'ioredis'
+	  version: 'latest'
